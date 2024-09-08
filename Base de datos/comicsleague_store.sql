@@ -58,3 +58,4 @@ CREATE TABLE VentaCompra (
     cantidad INT,
     PRIMARY KEY (id_producto, id_historico)
 );
+-- Prueba conexión github
