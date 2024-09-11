@@ -1,6 +1,7 @@
 import React from 'react';
 
 const Hero = () => {
+    
     const url = 'https://png.pngtree.com/thumb_back/fw800/background/20231228/pngtree-dynamic-comic-speed-lines-background-with-rectangular-fight-stamp-perfect-for-image_13903888.png';
   return (
     <section className="relative bg-cover bg-center h-screen" style={{ backgroundImage: `url(${url})` }}>
