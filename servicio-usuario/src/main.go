@@ -1,10 +1,11 @@
 package main
 
 import (
-	"context"
 	"log"
 
+	crud "github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/src/back-end/CRUD"
 	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/src/back-end/connection"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const defaultPort = "8080"
@@ -16,12 +17,8 @@ func main() {
 		log.Fatalf("Fallo en la conexión: %v", err)
 	}
 
-	// Asegurarse de desconectar al finalizar
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			log.Fatalf("Error al desconectar de MongoDB: %v", err)
-		}
-	}()
+	filter := bson.M{"nombre": "Pedro Olmos", "edad": 23, "correo": "pedro.olmos@alumnos.ucn.cl"}
+	crud.CreateUser(client, filter)
 
 	/*port := os.Getenv("PORT")
 	if port == "" {
