@@ -1,13 +1,17 @@
 type User {
   id: ID!
   name: String!
+  age: int! 
+  email: String!
+  password: String!
+
 }
 
 type Mutation {
-  createBook(input: NewBook!): Book!
+  
 }
 
 type Query { 
-  books: [Book!]!
+  
 }
 
