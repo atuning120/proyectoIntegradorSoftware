@@ -1,17 +1,43 @@
-type User {
-  id: ID!
-  name: String!
-  age: int! 
-  email: String!
-  password: String!
 
+type Usuario {
+    Id_usuario: ID!     
+    username: String!    
+    email: String!       
+    contrasena: String! 
+    nombre: String!       
+    apellido: String!     
+    telefono: String      
+}
+
+type Query {
+    usuario(Id_usuario: ID!): Usuario    
 }
 
 type Mutation {
-  
-}
 
-type Query { 
-  
-}
+    crearUsuario(
+        username: String!,
+        email: String!,
+        contrasena: String!,
+        nombre: String!,
+        apellido: String!,
+        telefono: String
+    ): Usuario!
 
+    actualizarUsuario(
+        Id_usuario: ID!,
+        username: String,
+        email: String,
+        contrasena: String,
+        nombre: String,
+        apellido: String,
+        telefono: String
+    ): Usuario!
+
+    eliminarUsuario(Id_usuario: ID!): Boolean!
+
+    login(
+        username: String!,
+        contrasena: String!
+    ): Usuario!
+}
