@@ -1,10 +1,19 @@
 import React from 'react';
 import imagen1 from '../assets/bannerBackGround01.jpg';
+
 const Hero = () => {
   return (
-    <section className="relative bg-cover bg-center h-screen" style={{ backgroundImage: `url('${imagen1}')` }}>
+    <section 
+      className="relative bg-cover bg-center h-screen" 
+      style={{ 
+        backgroundImage: `url('${imagen1}')`, 
+        backgroundRepeat: 'no-repeat',
+        width:'1500px',
+        height:'369px',
+      }}
+    >
       {/* Fondo oscuro transparente */}
-      <div className="absolute inset-0 bg-black opacity-60"></div>
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
 
       {/* Contenedor del contenido centrado */}
       <div className="relative flex flex-col items-center justify-center h-full">
@@ -17,6 +26,7 @@ const Hero = () => {
   );
 };
 
-
 export default Hero;
+
+
 
