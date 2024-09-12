@@ -32,5 +32,5 @@ func ConnectToMongoDB() (*mongo.Client, error) {
 	fmt.Println("Ping exitoso. ¡Conectado a MongoDB!")
 	return client, nil
 
-	//holi
+	//holi asdasdsad
 }
