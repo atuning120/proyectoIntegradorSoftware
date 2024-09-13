@@ -17,7 +17,16 @@ func main() {
 		log.Fatalf("Fallo en la conexión: %v", err)
 	}
 
-	filter := bson.M{"nombre": "Pedro Olmos", "edad": 23, "correo": "pedro.olmos@alumnos.ucn.cl"}
+	filter := bson.M{
+		"nombre":   "Marcos Chait",
+		"edad":     900,
+		"correo":   "marcos.chait@ucn.cl",
+		"username": "marcosc",
+		"password": "ancientknowledge", // Encriptar la contraseña antes de almacenar
+		"apellido": "Chait",
+		"telefono": "1010101010",
+		"rol":      "profesor", // Puede ser "admin", "profesor", "alumno"
+	}
 	crud.CreateUser(client, filter)
 
 	/*port := os.Getenv("PORT")
