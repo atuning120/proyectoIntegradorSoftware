@@ -6,8 +6,6 @@ import Carousel from './components/Carousel';
 const App = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
-      <Navbar />
-      <Hero />
       <Carousel />
     </div>
   );
