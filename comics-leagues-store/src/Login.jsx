@@ -21,12 +21,12 @@ const Login = () => {
 
 
     const [isLoginHovered, setIsLoginHovered] = useState(false);
-    const [isSignInHovered, setIsSignInHovered] = useState(false);
+    const [isSignUpHovered, setIsSignUpHovered] = useState(false);
     const [isQuestionInHovered, setIsQuestionHovered] = useState(false);
 
 
     const [loginButtonColor, setLoginButtonColor] = useState("green");
-    const [signInButtonColor, setSignInButtonColor] = useState("green");
+    const [signUpButtonColor, setSignUpButtonColor] = useState("green");
 
     const [error, setError] = useState('');
 
@@ -68,8 +68,8 @@ const Login = () => {
         }
     };
 
-    const handleSignInClick = () => {
-        setSignInButtonColor("green"); // Cambia el color a verde cuando se haga clic en "Sign-in"
+    const handleSignUpClick = () => {
+        console.log('han clickeado sign up, se debe redirigir a la pagina de signup para crear una cuenta nueva');
     };
 
     return (
@@ -98,7 +98,8 @@ const Login = () => {
                             id="password"
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded text-2xl mt-4" />
+                            className="w-full p-2 border border-gray-300 rounded text-2xl mt-4"
+                            />
                     </div>
                 </div>
                 <br></br>
@@ -112,16 +113,16 @@ const Login = () => {
                         Log-in
                     </button>
 
-                    {/*boton de sign-in*/}
+                    {/*boton de sign-up*/}
                     <button                    
                         className={`text-white py-4 px-8 text-3xl`}
-                        style={{ backgroundColor: isSignInHovered ? '#39e75f' : signInButtonColor }}
-                        onMouseEnter={() => setIsSignInHovered(true)}
-                        onMouseLeave={() => setIsSignInHovered(false)}
-                        onClick={handleSignInClick}
+                        style={{ backgroundColor: isSignUpHovered ? '#39e75f' : signUpButtonColor }}
+                        onMouseEnter={() => setIsSignUpHovered(true)}
+                        onMouseLeave={() => setIsSignUpHovered(false)}
+                        onClick={handleSignUpClick}
                         
                     >
-                        Sign-in
+                        Sign-up
                     </button>
 
                     <br /><br/>
