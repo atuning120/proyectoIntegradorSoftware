@@ -11,10 +11,6 @@ export const router= createBrowserRouter([
                 element: <div>inicio</div>
             },
             {
-                path:'celulares',
-                element: <div>Celulares</div>
-            },
-            {
                 path:'nosotros',
                 element: <div>Sobre Nosotros</div>
             },

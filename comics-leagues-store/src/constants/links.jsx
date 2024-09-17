@@ -6,11 +6,6 @@ export const navbarLinks = [
     },
     {
         id:2,
-        title:'Celulares',
-        href:'/celulares',
-    },
-    {
-        id:3,
         title:'Nosotros',
         href:'/nosotros',
     },
