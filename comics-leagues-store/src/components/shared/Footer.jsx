@@ -3,8 +3,7 @@ import { BiChevronRight } from 'react-icons/bi';
 import {Link} from 'react-router-dom';
 
 const Footer = () => {
-  return  <footer className="py-16 bg-gray-950 px-12 flex justify-between gap-10 text-slate-200 text-sm flex-wrap mt-10
-  md:flex-nowrap">
+  return  <footer className='py-16 bg-gray-950 px-12 flex justify-between gap-10 text-slate-200 text-sm flex-wrap mt-10 md:flex-nowrap'>
     <Link to='/' className={`text-2x1 font-bold tracking-tighter transition-all text-white flex-1`}>
         Comics League Store
     </Link>
@@ -32,10 +31,18 @@ const Footer = () => {
             Politicas
         </p>
         <nav className="flex flex-col gap-2 text-xs font-medium">
-            <Link to='#'>Cursos</Link>
-            <Link to='#'>Politicas de privacidad</Link>
-            <Link to='#'>Terminos de uso</Link>
+            <Link to='/'>Cursos</Link>
+            <Link to='#' className='text-slate-300 hover:text-white'>Politicas de privacidad</Link>
+            <Link to='#' className='text-slate-300 hover:text-white'>Terminos de uso</Link>
         </nav>
+    </div>
+    <div className="flex flex-col gap-4 flex-1">
+        <p className='font-semibold uppercase tracking-tighter'>
+            Siguenos
+        </p>
+        <p className='text-xs leading-6'>
+            No te pierdas de nuestras novedades y ofertas exclusivas
+        </p>
     </div>
   </footer>
 }
