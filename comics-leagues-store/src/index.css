@@ -1,17 +1,12 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: 'Poppins', sans-serif;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(4, 27, 27);
-}
-html{
-    width: 100%;
-    height: 100%;
-}
 /* Estilo para el fondo oscuro transparente */
 .bg-black {
     background-color: black;
@@ -43,10 +38,6 @@ html{
     text-align: center;
   }
   
-  /* Tamaños de texto */
-  .text-white {
-    color: white;
-  }
   
   .text-6xl {
     font-size: 4rem;
@@ -97,12 +88,6 @@ html{
     padding-left: 1rem;
     padding-right: 1rem;
   }
-/* Estilos para el navbar */
-.Encabezado {
-    background-color: #f8fafc; /* Color de fondo claro */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil */
-    background-color: rgb(4, 27, 27);
-  }
   
   .inicio {
     position: relative;
@@ -113,24 +98,4 @@ html{
   .Encabezado a {
     text-decoration: none;
     transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  .Encabezado a {
-    background-color: #f7fafc; /* Fondo gris claro */
-    color: #4a5568; /* Texto gris */
-    padding: 0.5rem 1rem; /* Padding adecuado */
-    border-radius: 0.5rem; /* Bordes redondeados */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra */
-  }
-  
-  .Encabezado a:hover {
-    background-color: #edf2f7; /* Hover más claro */
-    color: #4f46e5; /* Hover en los enlaces (color índigo) */
-  }
-  
-  /* Ajustes responsivos */
-  @media (max-width: 768px) {
-    .hidden.md\\:block {
-      display: none;
-    }
   }
