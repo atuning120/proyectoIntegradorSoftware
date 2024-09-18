@@ -1,5 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "../layouts/RootLayout";
+import HomePages from "../pages/HomePage";
+import AboutPages from "../pages/AboutPage";
 
 export const router= createBrowserRouter([
     {
@@ -8,11 +10,11 @@ export const router= createBrowserRouter([
         children:[
             {
                 index:true,
-                element: <div>inicio</div>
+                element: <HomePages/>
             },
             {
                 path:'nosotros',
-                element: <div>Sobre Nosotros Anashei</div>
+                element: <AboutPages/>
             },
             
         ]
