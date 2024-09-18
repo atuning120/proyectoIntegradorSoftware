@@ -1,85 +1,49 @@
-import React, { useEffect, useRef, useState } from 'react';
-import '../CatalogoHome.css';
+import React from 'react'
+import { BsChevronCompactLeft,BsChevronCompactRight } from 'react-icons/bs';
+import { RxDotFilled } from 'react-icons/rx';
 
-const listImages = [
-  { id: 1, imgUrl: 'src/assets/comic.jpg' },
-  { id: 2, imgUrl: 'src/assets/Eanime.jpg' },
-  { id: 3, imgUrl: 'src/assets/variosHeroes.jpg' },
+const slides = [
+    { url: 'src/assets/comic.jpg' },
+    { url: 'src/assets/Eanime.jpg' },
+    { url: 'src/assets/variosHeroes.jpg' },
 ];
 
+
 const Carousel = () => {
-  const listRef = useRef();
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const listNode = listRef.current;
-    const imgNode = listNode.querySelectorAll('li')[currentIndex];
-
-    if (imgNode) {
-      imgNode.scrollIntoView({
-        behavior: 'smooth',
-        inline: 'center', // Cambiado de block a inline para scroll horizontal
-      });
-    }
-  }, [currentIndex]);
-
-  const scrollToImage = (direction) => {
-    if (direction === 'prev') {
-      setCurrentIndex((curr) => {
+    const [currentIndex, setCurrentIndex] = React.useState(0);
+    const prevSlide = () => {
         const isFirstSlide = currentIndex === 0;
-        return isFirstSlide ? 0 : curr - 1;
-      });
-    } else {
-      const isLastSlide = currentIndex === listImages.length - 1;
-      if (!isLastSlide) {
-        setCurrentIndex(currentIndex + 1);
-      }
+        const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
+        setCurrentIndex(newIndex);
     }
-  };
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
-
+    const nextSlide = () => {
+        const isLastSlide = currentIndex === slides.length - 1;
+        const newIndex = isLastSlide ? 0 : currentIndex + 1;
+        setCurrentIndex(newIndex);
+    }
+    const goToSlide = (index) => {
+        setCurrentIndex(index);
+    }
   return (
-    <div className='main-container'>
-      {/* Cuadro donde se muestra el carrusel */}
-      <div className='slider-container'>
-        {/* Flecha izquierda */}
-        <div className='leftArrow' onClick={() => scrollToImage('prev')}>
-          &#10092;
+    <div className='max-w-[1400px] h-[780px] w-full m-auto py-16 px-4 relative group'>
+        <div style={{backgroundImage:`url(${slides[currentIndex].url})`}} className='w-full h-full rounded-2xl bg-center bg-cover duration-500'></div>
+      {/* left arrow*/}
+        <div className='hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[50%] left-5 text-2x1 rounded-full p-2 bg-black/20 text-white cursor-pointer'>
+            <BsChevronCompactLeft onClick={prevSlide} size={30}/>
         </div>
-        {/* Flecha derecha */}
-        <div className='rightArrow' onClick={() => scrollToImage('next')}>
-          &#10093;
+      {/* left arrow*/}
+        <div className='hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[50%] right-5 text-2x1 rounded-full p-2 bg-black/20 text-white cursor-pointer'>
+            <BsChevronCompactRight onClick={nextSlide} size={30}/>
         </div>
-        {/* Contenedor de las imágenes */}
-        <div className='container-images'>
-          <ul ref={listRef}>
-            {listImages.map((item) => {
-              return (
-                <li key={item.id}>
-                  <img src={item.imgUrl} width={500} height={280} />
-                </li>
-              );
-            })}
-          </ul>
+        <div className='flex top-4 justify-center py-2'>
+            {slides.map((slide, slideIndex)=>(
+                <div key={slideIndex} onClick={()=> goToSlide(slideIndex)} className='text-2xl cursor-pointer'>
+                    <RxDotFilled />
+                </div>
+            ))}
         </div>
-        <div className='dots-container'>
-          {listImages.map((item, index) => (
-            <div
-              key={index}
-              className={`dot-container-item ${index === currentIndex ? 'active' : ''}`}
-              onClick={() => goToSlide(index)}
-            >
-              &#9900;
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
-  );
-};
+  )
+}
 
-export default Carousel;
-
+export default Carousel

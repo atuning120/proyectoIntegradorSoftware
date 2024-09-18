@@ -1,10 +1,8 @@
-import React from 'react'
-
+import React from 'react';
+import Carousel from '../components/Carousel'; '../components/Carousel.jsx';
 const HomePage = () => {
   return (
-    <div>
-      pagina anashei
-    </div>
+    <Carousel />
   );
 };
 
