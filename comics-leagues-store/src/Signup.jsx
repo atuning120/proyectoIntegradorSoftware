@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './index.css';
-
+import './animations.css';
 
 
 
@@ -26,55 +26,70 @@ const Signup = () => {
     const [isRoleInHovered,setIsRoleInHovered] = useState(false);
 
     
-
+    const [hasError, setHasError] = useState(false);
 
     const [error, setError] = useState('');
 
     const [isTeacher, setIsTeacher] = useState(false);
     const [isSignUpHovered,setIsSignUpHovered] = useState(false);
+    const [isSignUpClicked, setIsSignUpClicked] = useState(false);
 
+    
+  
 
     const handleRoleButtonClick = (e) => {
-        e.preventDefault();
         setIsTeacher(!isTeacher);
     };
     
     const handleSignUpClick = async (evento) => {
         evento.preventDefault(); //evita que se reinicie la pagina
+        setIsSignUpClicked(true);
+
+        setTimeout(() => 
+        {
+            setIsSignUpClicked(false);
+        }, 300);
         let newErrors =[];
         console.log("ha hecho click: intentando crear cuenta");
-        
+
+        //regex para validar email(brutal)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
         if(name == ''){
-            newErrors.push('falta ingresar nombre en la casilla "Name"');
+            newErrors.push('Falta nombre en la casilla "Name".');
         }
         if(lastname == ''){
-            newErrors.push('falta ingresar apellido en la casilla "Last Name"');
+            newErrors.push('Falta apellido en la casilla "Last Name".');
         }
         if(userAge <= 1 || userAge > 120 || userAge === undefined){
-            newErrors.push('falta ingresar una edad valida en la casilla "Age"');
+            newErrors.push('Falta una edad valida en la casilla "Age".');
         }
         if(email == ''){
-            newErrors.push('falta ingresar su correo en la casilla "Email"');
+            newErrors.push('Falta su correo en la casilla "Email".');
+        }
+        if (!emailRegex.test(email)) {
+            newErrors.push('Formato invalido de email detectado.');
         }
         if(user == ''){
-            newErrors.push('falta ingresar su nombre de usuario en la casilla "User Name"');
+            newErrors.push('Falta su nombre de usuario en la casilla "User Name".');
         }
         if(password == ''){
-           newErrors.push('falta ingresar contraseña en la casilla "Password"');
+           newErrors.push('Falta contraseña en la casilla "Password".');
         }
         if(phone == ''){
-            newErrors.push('falta ingresar numero de telefono en la casilla "Phone"');
+            newErrors.push('Falta numero de telefono en la casilla "Phone".');
         }
         if(password.length < 4){
-           newErrors.push('su contraseña es demasiado corta, debe usar al menos 4 characteres');
+           newErrors.push('Su contraseña es demasiado corta, debe usar al menos 4 characteres.');
         }
 
         if (newErrors.length > 0) {
             setErrors(newErrors);
+            setHasError(true);
             return;
         }
         else{
+            setHasError(false);
             try {
                 console.log("enviando solicitud al backend para almacenar esta cuenta nueva");
                 const response = await fetch('backendURL', {
@@ -105,19 +120,17 @@ const Signup = () => {
         setErrors([]);//limpia todos los errores
 
     };
-
     
+
     return(
-        <div>
-            <h1 className='text-3xl text-white font-bold px-4'>
+        <div className='bg-gray-400 min-h-screen flex justify-center'>
+            <h1 className='text-3xl text-black  font-bold bg-gray-300 py-5 px-2 mt-12 mb-auto rounded-sm ml-6'>
                 Sign-up: create your account
             </h1>
-            <form className='space-y-6 max-w-md mx-auto p-4'>
-
-
+            <form className='mr-auto bg-gray-200 px-8 py-4 mb-auto mt-36 rounded-sm'>
                 <div className='parametros para crear cuenta'>
                     <div className='name'>
-                        <label htmlFor='name' className='text-white text-2xl'>Name</label>
+                        <label htmlFor='name' className='text-black  text-2xl'>Name</label>
                         <input 
                             placeholder='Enter your name here...'
                             type='text'
@@ -126,11 +139,11 @@ const Signup = () => {
                             onChange={(evento) =>setName(evento.target.value)}
                             maxLength={16}
                             style={{ width:'300px',marginLeft:'70px'}}
-                            className='w-full border border-gray-300 text-2xl mt-4' />
+                            className='w-full text-2xl mt-4' />
                     </div>
-
+                    <br></br>
                     <div className='lastname'>
-                        <label htmlFor='lastname' className='text-white text-2xl'>Last Name</label>
+                        <label htmlFor='lastname' className='text-black  text-2xl'>Last Name</label>
                         <input 
                             placeholder='Enter your last name here...'
                             type='text'
@@ -138,29 +151,29 @@ const Signup = () => {
                             value={lastname}
                             onChange={(evento) =>setLastname(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'15px'}}
-                            className='w-full border border-gray-300 text-2xl mt-4' />
+                            style={{ width:'300px',marginLeft:'21px'}}
+                            className='w-full text-2xl mt-4' />
                     </div>
 
                     <div className='age'>
-                        <label htmlFor='age' className='text-white text-2xl mr-1'>Age</label>
+                        <label htmlFor='age' className='text-black text-2xl mr-1'>Age</label>
                         <input
                             placeholder='Enter your age here...'
                             type='number'
                             id='age'
                             value={userAge}
                             onChange={(evento) =>setUserAge(evento.target.value)}
-                            min={1}
+                            min={2}
                             max={120}
-                            style={{ width:'300px',marginLeft:'90px'}}
+                            style={{ width:'300px',marginLeft:'87px'}}
                             
-                            className='w-full border border-gray-300 text-2xl mt-4' />
+                            className='w-full text-2xl mt-4' />
                             
                             
                     </div>
 
                     <div className='email'>
-                        <label htmlFor='user' className='text-white text-2xl'>Email</label>
+                        <label htmlFor='user' className='text-black  text-2xl'>Email</label>
                         <input 
                             placeholder='Enter your email here...'
                             type='email'
@@ -169,11 +182,11 @@ const Signup = () => {
                             onChange={(evento) =>setEmail(evento.target.value)}
                             maxLength={20}
                             style={{ width:'300px',marginLeft:'76.5px'}}
-                            className='w-full border border-gray-300 text-2xl mt-4' />
+                            className='w-full text-2xl mt-4' />
                     </div>
 
                     <div className='usuario'>
-                        <label htmlFor='user' className='text-white text-2xl'>User Name</label>
+                        <label htmlFor='user' className='text-black text-2xl'>User Name</label>
                         <input 
                             placeholder='Enter user name here...'
                             type='text'
@@ -181,26 +194,26 @@ const Signup = () => {
                             value={user}
                             onChange={(evento) =>setUser(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'10px'}}
-                            className='w-full border border-gray-300 text-2xl mt-4' />
+                            style={{ width:'300px',marginLeft:'15px'}}
+                            className='w-full text-2xl mt-4' />
                     </div>
-
+                    
                     <div className='password'>
-                        <label htmlFor='password' className='text-white text-2xl'>Password</label>
+                        <label htmlFor='password' className='text-black text-2xl'>Password</label>
                         <input
                             placeholder="Enter password..."
                             type="password"
                             id="password"
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
-                            style={{ width:'300px',marginLeft:'26px'}}
-                            className='w-full p-2 border border-gray-300 rounded text-2xl mt-4'
+                            style={{ width:'300px',marginLeft:'34px'}}
+                            className='w-full text-2xl mt-4'
                             maxLength={16}
                         />
                     </div>
 
                     <div className='phone'>
-                        <label htmlFor='phone' className='text-white text-2xl'>Phone</label>
+                        <label htmlFor='phone' className='text-black text-2xl'>Phone</label>
                         <input 
                             placeholder='Enter your phone number...'
                             type='text'
@@ -208,36 +221,53 @@ const Signup = () => {
                             value={phone}
                             onChange={(evento) =>setPhone(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'65px'}}
-                            className='w-full border border-gray-300 text-2xl mt-4' />
+                            style={{ width:'300px',marginLeft:'65.5px'}}
+                            className='w-full text-2xl mt-4' />
                     </div>
-                    <br></br>
-                    <div className='role button'>
-                        <label htmlFor='role' className='text-white text-2xl'>Click the box to change role</label>
-                        <br></br>
-                        <button 
-                            className="bg-gray-500 hover:bg-gray-700 text-white text-2xl"
-                            style={{ backgroundColor: isRoleInHovered ? 'red' : 'darkred' ,
-                                padding: '15px',
-                                marginLeft: '113px',
-                                marginTop: '10px',
-                                transition: 'background-color 0.4s ease'
-                            }}
-                            onMouseEnter={() => setIsRoleInHovered(true)}
-                            onMouseLeave={() => setIsRoleInHovered(false)}
-                            onClick={handleRoleButtonClick}
+                    
+                    <div className='mt-6'>
+                        <div className='relative'>
+                            <p className='text-black text-2xl'>Choose your role:</p>
+                            <h3 className='text-black text-2xl mb-4 ml-52 absolute top-0'>{isTeacher ? 'You are a teacher' : 'You are a student'}</h3>
+                        </div>
+                    <div className='ml-52 mt-4'>
+                        <input
+                            type='radio'
+                            id='student'
+                            name='role'
+                            value='student'
+                            checked={!isTeacher}
+                            onChange={handleRoleButtonClick}
+                            className='w-7 h-7 mr-2'
+                            style={{ accentColor: '#e5e4e2' }}
                         />
-                        <h3 className='text-white text-2xl'>{isTeacher ? 'You are a teacher' : 'You are a student'}</h3>
+                        <label htmlFor='student' className='text-black text-2xl'>Student</label>
+                        <br></br>
+                        <input
+                            type='radio'
+                            id='teacher'
+                            name='role'
+                            value='teacher'
+                            checked={isTeacher}
+                            onChange={handleRoleButtonClick}
+                            className='w-7 h-7 mr-2'
+                            style={{ accentColor: '#e5e4e2' }}
+                        />
+                        <label htmlFor='teacher' className='text-black text-2xl'>Teacher</label>
                     </div>
 
-
+                    <br></br>
                     {/*boton de sign-up*/}
                         <button     
-                        type='submit'               
-                        className={`text-white py-4 px-8 text-3xl`}
-                        style={{ backgroundColor: isSignUpHovered ? '#39e75f' : 'green' ,
-                            transition: 'background-color 0.4s ease'
-                        }}
+                        type='submit'
+                        className={`text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-12 mb-4 transition-transform ${isSignUpClicked ? 'button-clicked' : ''}`}
+                        style={{ 
+                            backgroundColor: hasError
+                              ? (isSignUpHovered ? 'silver' : 'red')
+                              : (isSignUpHovered ? '#50C878' : '#00A36C'),
+                            transition: 'background-color 0.4s ease',
+                            animation: isSignUpClicked ? 'clickEffect 0.2s ease-out' : 'none'
+                          }}
                         onMouseEnter={() => setIsSignUpHovered(true)}
                         onMouseLeave={() => setIsSignUpHovered(false)}
                         onClick={handleSignUpClick}
@@ -245,16 +275,18 @@ const Signup = () => {
                     >
                     Create Account
                     </button>
+                </div>
                     
+                </div>
+            </form>            
                         {errors.length > 0 && (
-                    <ul className='error-list text-white text-2xl'>
+                    <ul className={`error-list text-black text-2xl absolute top-36 left-28 bg-gray-200 p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
                         {errors.map((error, index) => (
                             <li key={index} className='error-item'>{error}</li>
+
                         ))}
                     </ul>
                     )}
-                </div>
-            </form>
         </div>
     );
 
