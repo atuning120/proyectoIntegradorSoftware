@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './index.css';
+import '../index.css';
 import Signup from './Signup';
-import './animations.css';
+import '../animations.css';
 
 
 //opcional, pero convierte las password en *'s (solo en alert)

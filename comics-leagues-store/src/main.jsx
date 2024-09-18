@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 //import App from './App';
 import './index.css';
-import Login from './Login';
-import Signup from './Signup';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 

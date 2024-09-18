@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import './index.css';
-import './animations.css';
+import '../index.css';
+import '../animations.css';
+import Login from './Login';
 
 
 
