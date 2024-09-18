@@ -12,7 +12,7 @@ export const router= createBrowserRouter([
             },
             {
                 path:'nosotros',
-                element: <div>Sobre Nosotros</div>
+                element: <div>Sobre Nosotros Anashei</div>
             },
             
         ]
