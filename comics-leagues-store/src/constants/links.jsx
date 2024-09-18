@@ -6,7 +6,7 @@ export const navbarLinks = [
     },
     {
         id:2,
-        title:'Nosotros',
-        href:'/nosotros',
+        title:'cursos',
+        href:'/cursos',
     },
 ]
