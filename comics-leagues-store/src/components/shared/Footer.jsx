@@ -31,7 +31,7 @@ const Footer = () => {
             Politicas
         </p>
         <nav className="flex flex-col gap-2 text-xs font-medium">
-            <Link to='/'>Cursos</Link>
+            <Link to='/cursos'>Cursos</Link>
             <Link to='#' className='text-slate-300 hover:text-white'>Politicas de privacidad</Link>
             <Link to='#' className='text-slate-300 hover:text-white'>Terminos de uso</Link>
         </nav>
