@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import '../index.css';
 import Signup from './Signup';
 import '../animations.css';
-
+import {Link} from 'react-router-dom'
+import BackButton from '../components/BackButton';
 
 //opcional, pero convierte las password en *'s (solo en alert)
 const maskText = (text) => {
@@ -99,24 +100,25 @@ const Login = () => {
     };
 
     const handleSignUpClick = (evento) => {
+        window.scrollTo(0, 0);
         setIsSignUpClicked(true);
         setTimeout(() => {
             setIsSignUpClicked(false);
-            navigate('/signup');
         }, 600);
         console.log('han clickeado sign up, se debe redirigir a la pagina de signup para crear una cuenta nueva');
         
     };
 
     return (
-        <div className='bg-gray-400 min-h-screen flex justify-center'>
+        <div className='bg-gray-400 min-h-screen flex justify-center relative'>
             <h1 className='text-3xl text-black  font-bold bg-gray-300 py-5 px-2 mt-12 mb-auto rounded-sm ml-6'>
                 Login: Bienvenido de nuevo a C.L.S.
             </h1>
-            <form className='mr-auto bg-gray-200 px-8 py-4 mb-auto mt-36 rounded-sm'>
+            <form className='mr-auto bg-gray-200 px-8 py-4 mb-auto mt-40 rounded-sm'>
                 <div className='parametros para iniciar sesion'>
                     <div className='usuario'>
                             <label htmlFor='user' className='text-black text-2xl'>User Name</label>
+                            <br></br>
                             <input 
                                 placeholder='Enter user name here...'
                                 type='text'
@@ -124,19 +126,20 @@ const Login = () => {
                                 value={user}
                                 onChange={(evento) =>setUser(evento.target.value)}
                                 maxLength={16}
-                                style={{ width:'300px',marginLeft:'15px'}}
+                                style={{ width:'300px'}}
                                 className='w-full text-2xl mt-4' />
                     </div>
                     <br></br>
                     <div className='password'>
                         <label htmlFor='password' className='text-black text-2xl'>Password</label>
+                        <br></br>
                         <input
                             placeholder="Enter password..."
                             type="password"
                             id="password"
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
-                            style={{ width:'300px',marginLeft:'34px'}}
+                            style={{ width:'300px'}}
                             className='w-full text-2xl mt-4'
                             maxLength={16}
                         />
@@ -144,11 +147,11 @@ const Login = () => {
                 </div>
                 <br></br>
 
-                <div className='relative top-10 right-4'>
+                <div className='relative top-10 right-6'>
                     {/*boton de log-in*/}
                     <button
                     type='submit'
-                    className={`text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-12 mb-4 transition-transform ${isLoginClicked ? 'button-clicked' : ''}`}
+                    className={`text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 transition-transform ${isLoginClicked ? 'button-clicked' : ''}`}
                     style={{ 
                         backgroundColor: hasError
                           ? (isLoginHovered ? 'silver' : 'red')
@@ -164,9 +167,9 @@ const Login = () => {
                     </button>
 
                     {/*boton de sign-up*/}
-                    <a
-                        href='/Signup'
-                        className={`text-black py-1 px-6 text-3xl rounded-3xl mt-4 ml-12 mb-4 transition-transform ${isSignUpClicked ? 'button-clicked' : ''}`}
+                    <Link
+                        to={'/Signup'} onClick={handleSignUpClick}
+                        className={`text-black py-1 px-3 text-3xl rounded-3xl mt-4 ml-6 mb-4 transition-transform ${isSignUpClicked ? 'button-clicked' : ''}`}
                         style={{ 
                             backgroundColor:
                               (isSignUpHovered ? '#50C878' : '#00A36C'),
@@ -175,11 +178,10 @@ const Login = () => {
                           }}
                         onMouseEnter={() => setIsSignUpHovered(true)}
                         onMouseLeave={() => setIsSignUpHovered(false)}
-                        onClick={handleSignUpClick}
                         
                     >
                         Sign-up
-                    </a>
+                    </Link>
                 </div>
 
                     <br /><br/>
@@ -194,9 +196,15 @@ const Login = () => {
                     >
                         ?
                     </button>
+
+               {/*boton de regreso a log-in*/}
+               <div>
+                    <BackButton to={'../'} destination={'Home'}/>
+                </div>
                 </form>
+
                 {errors.length > 0 && (
-                    <ul className={`error-list text-black text-2xl absolute top-36 left-28 bg-gray-200 p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
+                    <ul className={`error-list text-black text-2xl absolute top-48 left-48 bg-gray-200 p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
                         {errors.map((error, index) => (
                             <li key={index} className='error-item'>{error}</li>
 

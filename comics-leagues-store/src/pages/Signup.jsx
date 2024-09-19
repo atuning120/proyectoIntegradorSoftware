@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../index.css';
 import '../animations.css';
 import Login from './Login';
+import BackButton from '../components/BackButton';
 
 
 
@@ -41,7 +42,8 @@ const Signup = () => {
     const handleRoleButtonClick = (e) => {
         setIsTeacher(!isTeacher);
     };
-    
+
+
     const handleSignUpClick = async (evento) => {
         evento.preventDefault(); //evita que se reinicie la pagina
         setIsSignUpClicked(true);
@@ -139,20 +141,19 @@ const Signup = () => {
                             value={name}
                             onChange={(evento) =>setName(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'70px'}}
+                            style={{ width:'300px',marginLeft:'71px'}}
                             className='w-full text-2xl mt-4' />
                     </div>
-                    <br></br>
                     <div className='lastname'>
                         <label htmlFor='lastname' className='text-black  text-2xl'>Last Name</label>
                         <input 
-                            placeholder='Enter your last name here...'
+                            placeholder='Enter last name here...'
                             type='text'
                             id='lastname'
                             value={lastname}
                             onChange={(evento) =>setLastname(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'21px'}}
+                            style={{ width:'300px',marginLeft:'15px'}}
                             className='w-full text-2xl mt-4' />
                     </div>
 
@@ -166,7 +167,7 @@ const Signup = () => {
                             onChange={(evento) =>setUserAge(evento.target.value)}
                             min={2}
                             max={120}
-                            style={{ width:'300px',marginLeft:'87px'}}
+                            style={{ width:'300px',marginLeft:'93px'}}
                             
                             className='w-full text-2xl mt-4' />
                             
@@ -195,19 +196,19 @@ const Signup = () => {
                             value={user}
                             onChange={(evento) =>setUser(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'15px'}}
+                            style={{ width:'300px',marginLeft:'10px'}}
                             className='w-full text-2xl mt-4' />
                     </div>
                     
                     <div className='password'>
                         <label htmlFor='password' className='text-black text-2xl'>Password</label>
                         <input
-                            placeholder="Enter password..."
+                            placeholder="Enter password here..."
                             type="password"
                             id="password"
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
-                            style={{ width:'300px',marginLeft:'34px'}}
+                            style={{ width:'300px',marginLeft:'30px'}}
                             className='w-full text-2xl mt-4'
                             maxLength={16}
                         />
@@ -216,13 +217,13 @@ const Signup = () => {
                     <div className='phone'>
                         <label htmlFor='phone' className='text-black text-2xl'>Phone</label>
                         <input 
-                            placeholder='Enter your phone number...'
+                            placeholder='Enter phone number...'
                             type='text'
                             id='phone'
                             value={phone}
                             onChange={(evento) =>setPhone(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'65.5px'}}
+                            style={{ width:'300px',marginLeft:'67px'}}
                             className='w-full text-2xl mt-4' />
                     </div>
                     
@@ -277,11 +278,16 @@ const Signup = () => {
                     Create Account
                     </button>
                 </div>
+
+                {/*boton de regreso a log-in*/}
+                <div>
+                    <BackButton to={'/login'} destination={'log-in'}/>
+                </div>
                     
                 </div>
             </form>            
                         {errors.length > 0 && (
-                    <ul className={`error-list text-black text-2xl absolute top-36 left-28 bg-gray-200 p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
+                    <ul className={`error-list text-black text-2xl absolute top-60 left-60 bg-gray-200 p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
                         {errors.map((error, index) => (
                             <li key={index} className='error-item'>{error}</li>
 
