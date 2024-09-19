@@ -1,43 +1,35 @@
+type User {
+  id: ID!
+  nombre: String!
+  apellido: String!
+  username: String!
+  correo: String!
+  telefono: String!
+  rol: String!
+  edad: Int!
+}
 
-type Usuario {
-    Id_usuario: ID!     
-    username: String!    
-    email: String!       
-    contrasena: String! 
-    nombre: String!       
-    apellido: String!     
-    telefono: String      
+type AuthPayload {
+  token: String!
+  user: User!
 }
 
 type Query {
-    usuario(Id_usuario: ID!): Usuario    
+  getUser(username: String!): User
 }
 
 type Mutation {
+  login(username: String!, password: String!): AuthPayload!
+  signUp(input: NewUserInput!): AuthPayload! # Añade la mutación signUp
+}
 
-    crearUsuario(
-        username: String!,
-        email: String!,
-        contrasena: String!,
-        nombre: String!,
-        apellido: String!,
-        telefono: String
-    ): Usuario!
-
-    actualizarUsuario(
-        Id_usuario: ID!,
-        username: String,
-        email: String,
-        contrasena: String,
-        nombre: String,
-        apellido: String,
-        telefono: String
-    ): Usuario!
-
-    eliminarUsuario(Id_usuario: ID!): Boolean!
-
-    login(
-        username: String!,
-        contrasena: String!
-    ): Usuario!
+input NewUserInput {
+  username: String!
+  nombre: String!
+  apellido: String!
+  correo: String!
+  telefono: String!
+  rol: String!
+  edad: Int!
+  password: String!
 }

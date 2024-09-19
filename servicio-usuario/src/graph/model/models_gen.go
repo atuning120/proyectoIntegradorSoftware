@@ -2,18 +2,35 @@
 
 package model
 
+type AuthPayload struct {
+	Token string `json:"token"`
+	User  *User  `json:"user"`
+}
+
 type Mutation struct {
+}
+
+type NewUserInput struct {
+	Username string `json:"username"`
+	Nombre   string `json:"nombre"`
+	Apellido string `json:"apellido"`
+	Correo   string `json:"correo"`
+	Telefono string `json:"telefono"`
+	Rol      string `json:"rol"`
+	Edad     int    `json:"edad"`
+	Password string `json:"password"`
 }
 
 type Query struct {
 }
 
-type Usuario struct {
-	IDUsuario  string  `json:"Id_usuario"`
-	Username   string  `json:"username"`
-	Email      string  `json:"email"`
-	Contrasena string  `json:"contrasena"`
-	Nombre     string  `json:"nombre"`
-	Apellido   string  `json:"apellido"`
-	Telefono   *string `json:"telefono,omitempty"`
+type User struct {
+	ID       string `json:"id"`
+	Nombre   string `json:"nombre"`
+	Apellido string `json:"apellido"`
+	Username string `json:"username"`
+	Correo   string `json:"correo"`
+	Telefono string `json:"telefono"`
+	Rol      string `json:"rol"`
+	Edad     int    `json:"edad"`
 }
