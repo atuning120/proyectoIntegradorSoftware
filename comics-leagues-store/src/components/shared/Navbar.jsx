@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { navbarLinks } from '../../constants/links';
 import {
@@ -5,21 +6,26 @@ import {
 	HiOutlineShoppingBag,
 } from 'react-icons/hi';
 import { FaBarsStaggered } from 'react-icons/fa6';
-import {Logo} from './Logo';
+import { Logo } from './Logo';
 
 export const Navbar = () => {
+	const [searchText, setSearchText] = useState(''); // Estado para almacenar el texto de búsqueda
+
+	const handleSearch = () => {
+		// Instrucciones para la barra de busqueda anashei
+		console.log('Texto de búsqueda:', searchText);
+	};
+
 	return (
 		<header className='bg-white text-black py-4 flex items-center justify-between px-5 border-b border-slate-200 lg:px-12'>
-			
-			<Logo/>
+			<Logo />
 			<nav className='space-x-5 hidden md:flex'>
 				{navbarLinks.map(link => (
 					<NavLink
 						key={link.id}
 						to={link.href}
 						className={({ isActive }) =>
-							`${
-								isActive ? 'text-cyan-600 underline' : ''
+							`${isActive ? 'text-cyan-600 underline' : ''
 							} transition-all duration-300 font-medium hover:text-cyan-600 hover:underline `
 						}
 					>
@@ -31,12 +37,14 @@ export const Navbar = () => {
 			<div className='flex gap-5 items-center'>
 				{/* Barra de búsqueda */}
 				<div className="relative flex items-center">
-					<input 
-						type="text" 
-						placeholder="Buscar..." 
+					<input
+						type="text"
+						placeholder="Buscar..."
+						value={searchText}
+						onChange={(e) => setSearchText(e.target.value)} // Actualiza el estado con el valor ingresado
 						className="border rounded-full px-3 py-1.5 text-sm focus:outline-none focus:border-cyan-600 transition-all duration-300"
 					/>
-					<button className="ml-2">
+					<button onClick={handleSearch} className="ml-2">
 						<HiOutlineSearch size={25} />
 					</button>
 				</div>
@@ -52,7 +60,7 @@ export const Navbar = () => {
 				</div>
 
 				<button className='relative'>
-				<span className='absolute -bottom-2 -right-2 w-5 h-5 grid place-items-center bg-black text-white text-xs rounded-full'>
+					<span className='absolute -bottom-2 -right-2 w-5 h-5 grid place-items-center bg-black text-white text-xs rounded-full'>
 						0
 					</span>
 					<HiOutlineShoppingBag size={25} />
@@ -65,4 +73,3 @@ export const Navbar = () => {
 		</header>
 	);
 };
-
