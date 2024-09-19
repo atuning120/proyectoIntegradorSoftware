@@ -3,7 +3,7 @@ export const Logo = () => {
     return (
         <Link to='/' className={`text-2x1 font-bold tracking-tighter transition-all`}>
             <p className=' hidden text-cyan-500 text-3xl lg:block '>
-                Comics
+                Comic
                 <span className='text-3xl text-cyan-600'>League</span>
                 <span className='text-cyan-800 text-3xl'>Store</span>
             </p>
