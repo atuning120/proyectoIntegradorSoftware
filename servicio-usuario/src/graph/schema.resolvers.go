@@ -125,6 +125,19 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 	// Define la colección de usuarios
 	collection := client.Database("Usuario").Collection("usuario")
 
+	// Verifica si el correo ya existe
+	filterCorreo := bson.M{"correo": input.Correo}
+	var existingCorreo bson.M
+	err = collection.FindOne(ctx, filterCorreo).Decode(&existingCorreo)
+	if err != nil && err != mongo.ErrNoDocuments {
+		return nil, fmt.Errorf("error al verificar el correo: %v", err)
+	}
+
+	// Si `err` es nil, significa que ya existe un usuario con ese correo
+	if err == nil {
+		return nil, fmt.Errorf("el correo ya está en uso")
+	}
+
 	// Verifica si el usuario ya existe
 	filter := bson.M{"username": input.Username}
 	var existingUser bson.M
@@ -135,8 +148,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 		return nil, fmt.Errorf("error al verificar el usuario: %v", err)
 	}
 
-	// Si `err` es `mongo.ErrNoDocuments`, eso significa que el usuario no existe y puedes continuar con la creación.
-
+	// Si `err` es nil, eso significa que el usuario ya existe
 	if err == nil {
 		return nil, fmt.Errorf("el usuario ya existe")
 	}
@@ -159,16 +171,19 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 		"password": string(hashedPassword),
 	}
 
-	// Inserta el nuevo usuario
+	// Inserta el nuevo usuario y maneja posibles errores de duplicado
 	_, err = collection.InsertOne(ctx, newUser)
 	if err != nil {
+		if mongo.IsDuplicateKeyError(err) {
+			return nil, fmt.Errorf("el correo ya está en uso")
+		}
 		return nil, fmt.Errorf("error al crear el usuario: %v", err)
 	}
 
 	// Generar un token JWT
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": input.Username,
-		"exp":      time.Now().Add(24 * time.Hour).Unix(),
+		"exp":      time.Now().Add(24 * time.Hour).Unix(), // Expira en 24 horas
 	})
 
 	// Firmar el token con la clave secreta
@@ -181,6 +196,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 	return &model.AuthPayload{
 		Token: tokenString,
 		User: &model.User{
+			ID:       primitive.NewObjectID().Hex(),
 			Username: input.Username,
 			Nombre:   input.Nombre,
 			Apellido: input.Apellido,
