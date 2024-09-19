@@ -2,34 +2,33 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"os"
 
-	crud "github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/src/back-end/CRUD"
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/src/back-end/connection"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-usuario/src/graph" // Importa graph correctamente
 )
 
 const defaultPort = "8080"
 
 func main() {
-
-	client, err := connection.ConnectToMongoDB()
-	if err != nil {
-		log.Fatalf("Fallo en la conexión: %v", err)
-	}
-
-	filter := bson.M{"nombre": "Pedro Olmos", "edad": 23, "correo": "pedro.olmos@alumnos.ucn.cl"}
-	crud.CreateUser(client, filter)
-
-	/*port := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	// Configuración del servidor GraphQL
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{ // Ajusta la llamada con graph.Config
+		Resolvers:  &graph.Resolver{},      // Resolver definido en graph/resolver.go
+		Directives: graph.DirectiveRoot{},  // Configura las directivas si es necesario
+		Complexity: graph.ComplexityRoot{}, // Configura la complejidad si es necesario
+	}))
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	// Configura las rutas para el Playground y las queries
+	http.Handle("/", playground.Handler("GraphQL Playground", "/query"))
 	http.Handle("/query", srv)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))*/
+	log.Printf("Conecta a http://localhost:%s/ para el GraphQL Playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
