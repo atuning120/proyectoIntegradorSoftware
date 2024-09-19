@@ -29,6 +29,13 @@ const products = [
     price: '$1.000',
     image: 'https://via.placeholder.com/150',
   },
+  {
+    id: 5,
+    name: 'Curso 5',
+    description: 'Descripcion Curso 5',
+    price: '$1.000',
+    image: 'https://via.placeholder.com/150',
+  },
 ];
 
 const ProductGrid = () => {

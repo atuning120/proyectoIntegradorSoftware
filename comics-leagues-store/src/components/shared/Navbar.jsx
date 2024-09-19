@@ -29,9 +29,17 @@ export const Navbar = () => {
 			</nav>
 
 			<div className='flex gap-5 items-center'>
-				<button>
-					<HiOutlineSearch size={25} />
-				</button>
+				{/* Barra de búsqueda */}
+				<div className="relative flex items-center">
+					<input 
+						type="text" 
+						placeholder="Buscar..." 
+						className="border rounded-full px-3 py-1.5 text-sm focus:outline-none focus:border-cyan-600 transition-all duration-300"
+					/>
+					<button className="ml-2">
+						<HiOutlineSearch size={25} />
+					</button>
+				</div>
 
 				<div className='relative'>
 					{/* User Nav */}
@@ -57,3 +65,4 @@ export const Navbar = () => {
 		</header>
 	);
 };
+
