@@ -126,8 +126,8 @@ const Signup = () => {
     
 
     return(
-        <div className='bg-gray-400 min-h-screen flex justify-center'>
-            <h1 className='text-3xl text-black  font-bold bg-gray-300 py-5 px-2 mt-12 mb-auto rounded-sm ml-6'>
+        <div className='bg-gradient-to-t from-gray-200 to-transparent min-h-screen flex justify-center -mt-16'>
+            <h1 className='text-3xl text-black  font-bold bg-gradient-to-t from-gray-300 to-transparent py-5 px-2 mt-12 mb-auto rounded-sm ml-6'>
                 Sign-up: create your account
             </h1>
             <form className='mr-auto bg-gray-200 px-8 py-4 mb-auto mt-36 rounded-sm'>
@@ -287,7 +287,7 @@ const Signup = () => {
                 </div>
             </form>            
                         {errors.length > 0 && (
-                    <ul className={`error-list text-black text-2xl absolute top-60 left-60 bg-gray-200 p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
+                    <ul className={`error-list text-black text-2xl absolute top-60 left-60 bg-gradient-to-t from-red-800 to-transparent p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
                         {errors.map((error, index) => (
                             <li key={index} className='error-item'>{error}</li>
 

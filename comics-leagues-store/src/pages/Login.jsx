@@ -110,14 +110,15 @@ const Login = () => {
     };
 
     return (
-        <div className='bg-gray-400 min-h-screen flex justify-center relative'>
-            <h1 className='text-3xl text-black  font-bold bg-gray-300 py-5 px-2 mt-12 mb-auto rounded-sm ml-6'>
-                Login: Bienvenido de nuevo a C.L.S.
+        <div className='flex flex-col items-center w-full h-screen'>
+        <div className='relative bg-gradient-to-t from-blue-300 to-transparent p-2 rounded-lg flex flex-col items-center'>
+            <h1 className='text-3xl text-black font-bold max-w-[800px] max-h-[100px]'>
+            Welcome back to C.L.S.
             </h1>
-            <form className='mr-auto bg-gray-200 px-8 py-4 mb-auto mt-40 rounded-sm'>
-                <div className='parametros para iniciar sesion'>
+            <form className='px-4 py-2 mt-4 w-full max-w-md'>
+                <div className=''>
                     <div className='usuario'>
-                            <label htmlFor='user' className='text-black text-2xl'>User Name</label>
+                            <label htmlFor='user' className='text-black text-2xl font-semibold'>User Name</label>
                             <br></br>
                             <input 
                                 placeholder='Enter user name here...'
@@ -131,7 +132,7 @@ const Login = () => {
                     </div>
                     <br></br>
                     <div className='password'>
-                        <label htmlFor='password' className='text-black text-2xl'>Password</label>
+                        <label htmlFor='password' className='text-black text-2xl font-semibold'>Password</label>
                         <br></br>
                         <input
                             placeholder="Enter password..."
@@ -203,15 +204,16 @@ const Login = () => {
                 </div>
                 </form>
 
+        </div>
                 {errors.length > 0 && (
-                    <ul className={`error-list text-black text-2xl absolute top-48 left-48 bg-gray-200 p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
+                    <ul className={`error-list text-black text-2xl bg-gradient-to-t from-red-600 to-transparent p-4 rounded-xl`}style={{maxHeight:'600px',overflowY:'auto'}}>
                         {errors.map((error, index) => (
                             <li key={index} className='error-item'>{error}</li>
 
                         ))}
                     </ul>
                     )}
-        </div>
+    </div>
     );
 };
 

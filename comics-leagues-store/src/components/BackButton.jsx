@@ -14,7 +14,6 @@ const BackButton = ({ to, destination }) => {
             style={{
                 display: 'flex',
                 alignItems: 'center',
-                background: 'silver',
                 cursor: 'pointer',
                 width: '180px', // Set width to auto or specific size
                 height: '40px', // Set a fixed height
@@ -23,7 +22,7 @@ const BackButton = ({ to, destination }) => {
             }}
 
             onClick={handleClick} >
-                <button style={{ display: 'flex', background: 'silver', cursor: 'pointer' }}>
+                <button style={{ display: 'flex', cursor: 'pointer' }}>
                     <span style={{ marginRight: '8px' }}>&#8592;</span>
                     {label}
                 </button>
