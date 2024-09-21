@@ -36,68 +36,85 @@ const Login = () => {
     const [isSignUpClicked,setIsSignUpClicked] = useState(false);
     const [isLoginClicked,setIsLoginClicked] = useState(false);
 
-
-
     const [error, setError] = useState('');
     const [hasError, setHasError] = useState(false);
 
-    const handleLoginClick = async (evento) => {
-        evento.preventDefault();
-        console.log('Login button clicked'); // Check if this appears in the console
-        setIsLoginClicked(true);
-        setTimeout(() => {
-            setIsLoginClicked(false);
-        }, 300);
 
-        let newErrors =[];
 
-        if(user == ''){
-            newErrors.push('Falta su nombre de usuario en la casilla "User Name".');
-        }
-        if(password == ''){
-           newErrors.push('Falta contraseña en la casilla "Password".');
-        }
-        
+  // URL de tu backend (asegúrate de cambiarlo si es necesario)
+  const backendUrl = 'http://localhost:8080/query';
 
-        if (newErrors.length > 0) {
-            setErrors(newErrors);
-            setHasError(true);
-            return;
-        }
-        else{
-            setHasError(false);
-            try {
-                console.log('Sending login request');
-                const response = await fetch('backendurl', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email: user, password }),
-                });
-        
-                console.log('Received response:', response); // Log the response object
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Login successful(finalmente):', data);
-                    setErrors([]);//limpia todos los errores
-                } else {
-                    console.log('Login failed:', response.statusText);
-                    setError('Login failed');
-                    setLoginButtonColor('darkred');
+  const handleLoginClick = async (evento) => {
+    evento.preventDefault();
+    setIsLoginClicked(true);
+    setTimeout(() => {
+      setIsLoginClicked(false);
+    }, 300);
+
+    let newErrors = [];
+
+    if (user === '') {
+      newErrors.push('Falta su nombre de usuario en la casilla "User Name".');
+    }
+    if (password === '') {
+      newErrors.push('Falta contrasena en la casilla "Password".');
+    }
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
+      setHasError(true);
+      return;
+    } else {
+      setHasError(false);
+      try {
+        // Enviar la solicitud al servidor GraphQL
+        const response = await fetch(backendUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+              mutation Login($username: String!, $password: String!) {
+                login(username: $username, password: $password) {
+                  token
+                  user {
+                    id
+                    nombre
+                    apellido
+                    username
+                    correo
+                  }
                 }
-        
-            } catch (error) {
-                console.error('Error during login:', error);
-                setError('An error occurred');
-                setLoginButtonColor('darkred');
-            }
+              }
+            `,
+            variables: {
+              username: user,
+              password: password,
+            },
+          }),
+        });
 
+        if (response.ok) {
+          const data = await response.json();
+          if (data.errors) {
+            console.log('Login failed:', data.errors[0].message);
+            setError('Login failed');
+          } else {
+            console.log('Login successful:', data.data.login);
+            setErrors([]); // limpia todos los errores
+          }
+        } else {
+          console.log('Login failed:', response.statusText);
+          setError('Login failed');
         }
-        setErrors([]);//limpia todos los errores
- 
-
-    };
+      } catch (error) {
+        console.error('Error during login:', error);
+        setError('An error occurred');
+      }
+    }
+  };
+    
 
     const handleSignUpClick = (evento) => {
         window.scrollTo(0, 0);

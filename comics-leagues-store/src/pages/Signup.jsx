@@ -43,6 +43,21 @@ const Signup = () => {
         setIsTeacher(!isTeacher);
     };
 
+    // Definir la mutacion de GraphQL como una cadena
+    const SIGNUP_MUTATION = `
+      mutation SignUp($input: NewUserInput!) {
+        signUp(input: $input) {
+          token
+          user {
+            id
+            nombre
+            apellido
+            username
+            correo
+          }
+        }
+      }
+    `;    
 
     const handleSignUpClick = async (evento) => {
         evento.preventDefault(); //evita que se reinicie la pagina
@@ -90,38 +105,51 @@ const Signup = () => {
             setErrors(newErrors);
             setHasError(true);
             return;
-        }
-        else{
+        } else {
             setHasError(false);
-            try {
-                console.log("enviando solicitud al backend para almacenar esta cuenta nueva");
-                const response = await fetch('backendURL', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: name, lastname: lastname,
-                        userAge: userAge, email:email, user:user,password:password,
-                        phone:phone,isTeacher:isTeacher})
-                    });
-                    
-                    console.log('Received response: ',response);
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('funciono: creacion de cuenta', data);
-                        setErrors([]);//limpia todos los errores
-                        
-                        
-                    } else {
-                        console.log('Signup failed:', response.statusText);
-                        newErrors.push('Signup failed(problemas de conexion)');
-                        
-                    }
-                } catch (error) {
-                    console.log("error durante creacion de cuenta: ",error)
-                    //setError('An error occurred');
-                }
-        }
-        setErrors([]);//limpia todos los errores
 
+            try {
+                console.log("Enviando solicitud al backend para almacenar esta cuenta nueva");
+
+                // Ejecuta la solicitud de fetch con la mutacion
+                const response = await fetch('http://localhost:8080/query', { // Cambia esto a la URL correcta de tu backend GraphQL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: SIGNUP_MUTATION, // La mutacion de GraphQL
+                        variables: {
+                            input: {
+                                nombre: name,
+                                apellido: lastname,
+                                edad: parseInt(userAge),
+                                correo: email,
+                                username: user,
+                                password: password,
+                                telefono: phone,
+                                rol: isTeacher ? 'profesor' : 'alumno', // Ajusta esto segun tu backend
+                            },
+                        },
+                    }),
+                });
+
+                const data = await response.json();
+                console.log('Resultado del registro:', data);
+
+                if (data.errors) {
+                    newErrors.push('Error en la creacion de la cuenta.');
+                    setErrors(newErrors);
+                } else {
+                    console.log('Registro exitoso:', data.data.signUp);
+                    setErrors([]);
+                }
+            } catch (error) {
+                console.error('Error durante la creacion de la cuenta:', error);
+                newErrors.push('Error durante la creacion de la cuenta.');
+                setErrors(newErrors);
+            }
+        }
     };
     
 
