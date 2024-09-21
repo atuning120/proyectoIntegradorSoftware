@@ -8,6 +8,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-usuario/src/graph" // Importa graph correctamente
+	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
@@ -27,9 +28,16 @@ func main() {
 		Complexity: graph.ComplexityRoot{}, // Configura la complejidad si es necesario
 	}))
 
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"}, // Cambia esto a la URL de tu frontend
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+	})
+
 	// Configura las rutas para el Playground y las queries
 	http.Handle("/", playground.Handler("GraphQL Playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", c.Handler(srv))
 
 	log.Printf("Conecta a http://localhost:%s/ para el GraphQL Playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
