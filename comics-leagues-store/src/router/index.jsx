@@ -4,6 +4,8 @@ import HomePages from "../pages/HomePage";
 import CursosPage from "../pages/CursosPage"; "../pages/CursosPage.jsx";
 import Login from '../pages/Login.jsx';
 import SignUp from '../pages/Signup.jsx';
+import Policies from "../pages/Policies.jsx";
+import Privacy from "../pages/Privacy.jsx";
 
 export const router= createBrowserRouter([
     {
@@ -25,6 +27,14 @@ export const router= createBrowserRouter([
             {
                 path:'signup',
                 element: <SignUp />
+            },
+            {
+                path:'policies',
+                element: <Policies />
+            },
+            {
+                path:'privacy',
+                element: <Privacy />
             }
             
         ]
