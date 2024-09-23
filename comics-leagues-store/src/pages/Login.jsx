@@ -9,6 +9,10 @@ import BackButton from '../components/BackButton';
 const maskText = (text) => {
     return '*'.repeat(text.length);
 };
+//Para acceder a los datos del usuario desde cualquier componentes del front
+//const token = localStorage.getItem('token');
+//const user = JSON.parse(localStorage.getItem('user'));
+//console.log(user);
 
 const fetchWithTimeout = (url, options, timeout = 5000) => {
     return Promise.race([
@@ -102,6 +106,11 @@ const Login = () => {
             setError('Login failed');
           } else {
             console.log('Login successful:', data.data.login);
+            // Guarda el token en el localStorage
+            localStorage.setItem('token', data.data.login.token);
+
+            // Si necesitas otros datos del usuario, también puedes guardarlos
+             localStorage.setItem('user', JSON.stringify(data.data.login.user));
             setErrors([]); // limpia todos los errores
           }
         } else {
