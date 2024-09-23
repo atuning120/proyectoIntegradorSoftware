@@ -22,6 +22,13 @@ const fetchWithTimeout = (url, options, timeout = 5000) => {
         )
     ]);
 };
+const isAuthenticated = () => {
+	const token = localStorage.getItem('token');
+  if(token){
+    return true;
+  }
+	return false;
+};
 
 const Login = () => {
     const [errors, setErrors] = useState([]);
@@ -112,6 +119,9 @@ const Login = () => {
             // Si necesitas otros datos del usuario, también puedes guardarlos
              localStorage.setItem('user', JSON.stringify(data.data.login.user));
             setErrors([]); // limpia todos los errores
+
+            // Redirigir a la página de inicio
+            window.location.href = '/';
           }
         } else {
           console.log('Login failed:', response.statusText);

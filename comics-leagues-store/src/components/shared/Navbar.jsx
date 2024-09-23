@@ -12,13 +12,6 @@ const isAuthenticated = () => {
 	const token = localStorage.getItem('token');
 	return !!token; // Si hay un token, el usuario está autenticado
 };
-//Cerrar sesion
-const logout = () => {
-	localStorage.removeItem('token');
-	localStorage.removeItem('user');
-	// Redirigir a la página de login o home
-};
-//logout();
 
 //Si el usuario está logueado, extraer la primer letra del username
 const PrimerLetra=()=>{
@@ -30,7 +23,15 @@ const PrimerLetra=()=>{
 		return '\u{02726}'; 
 	}
 }
-console.log(PrimerLetra());
+
+//Direccion de redireccionamiento Elemento de perfil
+const perfil=()=>{
+	if(isAuthenticated()){
+		return '/userprofile';
+	}else{
+		return '/login';
+	}
+}
 
 export const Navbar = () => {
 	const [searchText, setSearchText] = useState(''); // Estado para almacenar el texto de búsqueda
@@ -76,7 +77,7 @@ export const Navbar = () => {
 				<div className='relative'>
 					{/* User Nav */}
 					<Link
-						to='/login'
+						to={perfil()}
 						className='border-2 border-slate-700 w-9 h-9 rounded-full grid place-items-center text-lg font-bold'
 					>
 						{PrimerLetra()}
