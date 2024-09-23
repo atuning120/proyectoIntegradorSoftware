@@ -4,6 +4,7 @@ import Signup from './Signup';
 import '../animations.css';
 import {Link} from 'react-router-dom'
 import BackButton from '../components/BackButton';
+import { useNavigate } from 'react-router-dom'; // Hook para la navegación
 
 //opcional, pero convierte las password en *'s (solo en alert)
 const maskText = (text) => {
