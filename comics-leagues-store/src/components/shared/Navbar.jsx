@@ -8,6 +8,30 @@ import {
 import { FaBarsStaggered } from 'react-icons/fa6';
 import { Logo } from './Logo';
 
+const isAuthenticated = () => {
+	const token = localStorage.getItem('token');
+	return !!token; // Si hay un token, el usuario está autenticado
+};
+//Cerrar sesion
+const logout = () => {
+	localStorage.removeItem('token');
+	localStorage.removeItem('user');
+	// Redirigir a la página de login o home
+};
+//logout();
+
+//Si el usuario está logueado, extraer la primer letra del username
+const PrimerLetra=()=>{
+	if(isAuthenticated()){
+		const token = localStorage.getItem('token');
+		const user = JSON.parse(localStorage.getItem('user'));
+		return user.username[0].toUpperCase();
+	}else{
+		return '\u{02726}'; 
+	}
+}
+console.log(PrimerLetra());
+
 export const Navbar = () => {
 	const [searchText, setSearchText] = useState(''); // Estado para almacenar el texto de búsqueda
 
@@ -55,7 +79,8 @@ export const Navbar = () => {
 						to='/login'
 						className='border-2 border-slate-700 w-9 h-9 rounded-full grid place-items-center text-lg font-bold'
 					>
-						R
+						{PrimerLetra()}
+						
 					</Link>
 				</div>
 
