@@ -32,8 +32,8 @@ const Footer = () => {
         </p>
         <nav className="flex flex-col gap-2 text-xs font-medium">
             <Link to='/cursos'>Cursos</Link>
-            <Link to='#' className='text-slate-300 hover:text-white'>Politicas de privacidad</Link>
-            <Link to='#' className='text-slate-300 hover:text-white'>Terminos de uso</Link>
+            <Link to='/policies' className='text-slate-300 hover:text-white'>Politicas de privacidad</Link>
+            <Link to='/privacy' className='text-slate-300 hover:text-white'>Terminos de uso</Link>
         </nav>
     </div>
     <div className="flex flex-col gap-4 flex-1">
