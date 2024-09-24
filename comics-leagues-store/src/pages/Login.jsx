@@ -4,11 +4,16 @@ import Signup from './Signup';
 import '../animations.css';
 import {Link} from 'react-router-dom'
 import BackButton from '../components/BackButton';
+import { useNavigate } from 'react-router-dom'; // Hook para la navegación
 
 //opcional, pero convierte las password en *'s (solo en alert)
 const maskText = (text) => {
     return '*'.repeat(text.length);
 };
+//Para acceder a los datos del usuario desde cualquier componentes del front
+//const token = localStorage.getItem('token');
+//const user = JSON.parse(localStorage.getItem('user'));
+//console.log(user);
 
 const fetchWithTimeout = (url, options, timeout = 5000) => {
     return Promise.race([
@@ -17,6 +22,13 @@ const fetchWithTimeout = (url, options, timeout = 5000) => {
             setTimeout(() => reject(new Error('Request timed out(no esta llegando al backend o no esta regresando)')), timeout)
         )
     ]);
+};
+const isAuthenticated = () => {
+	const token = localStorage.getItem('token');
+  if(token){
+    return true;
+  }
+	return false;
 };
 
 const Login = () => {
@@ -102,7 +114,15 @@ const Login = () => {
             setError('Login failed');
           } else {
             console.log('Login successful:', data.data.login);
+            // Guarda el token en el localStorage
+            localStorage.setItem('token', data.data.login.token);
+
+            // Si necesitas otros datos del usuario, también puedes guardarlos
+             localStorage.setItem('user', JSON.stringify(data.data.login.user));
             setErrors([]); // limpia todos los errores
+
+            // Redirigir a la página de inicio
+            window.location.href = '/';
           }
         } else {
           console.log('Login failed:', response.statusText);

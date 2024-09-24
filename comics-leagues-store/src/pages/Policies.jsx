@@ -3,7 +3,7 @@ import React from 'react'
 const Policies = () => {
   return (
     <div>
-      Politicas
+      Politicas anahsei
     </div>
   )
 }

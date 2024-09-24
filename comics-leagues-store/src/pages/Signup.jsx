@@ -4,7 +4,13 @@ import '../animations.css';
 import Login from './Login';
 import BackButton from '../components/BackButton';
 
-
+const isAuthenticated = () => {
+	const token = localStorage.getItem('token');
+  if(token){
+    return true;
+  }
+	return false;
+};
 
 const fetchWithTimeout = (url, options, timeout = 5000) => {
     return Promise.race([
