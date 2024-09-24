@@ -44,12 +44,3 @@ func ConnectToMongoDB() (*mongo.Client, error) {
 }
 
 // Obtener la colección de productos
-func GetProductCollection() (*mongo.Collection, error) {
-	client, err := ConnectToMongoDB()
-	if err != nil {
-		return nil, err
-	}
-
-	collection := client.Database("Producto").Collection("productos")
-	return collection, nil
-}

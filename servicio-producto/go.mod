@@ -1,4 +1,4 @@
-module src
+module github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src
 
 go 1.23.1
 
