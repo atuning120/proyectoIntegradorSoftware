@@ -42,7 +42,7 @@ const Signup = () => {
     const [isSignUpHovered,setIsSignUpHovered] = useState(false);
     const [isSignUpClicked, setIsSignUpClicked] = useState(false);
 
-    
+    const [isAccountCreated, setIsAccountCreated] = useState(false);
   
 
     const handleRoleButtonClick = (e) => {
@@ -110,6 +110,7 @@ const Signup = () => {
         if (newErrors.length > 0) {
             setErrors(newErrors);
             setHasError(true);
+            setIsAccountCreated(false);
             return;
         } else {
             setHasError(false);
@@ -139,21 +140,30 @@ const Signup = () => {
                         },
                     }),
                 });
-
-                const data = await response.json();
-                console.log('Resultado del registro:', data);
-
-                if (data.errors) {
-                    newErrors.push('Error en la creacion de la cuenta.');
-                    setErrors(newErrors);
-                } else {
-                    console.log('Registro exitoso:', data.data.signUp);
-                    setErrors([]);
-                }
+                
+                if(response.ok){
+                    const data = await response.json();
+                    console.log('Resultado del registro:', data);
+                    if (data.errors) {
+                        newErrors.push('Error en la creacion de la cuenta.');
+                        setErrors(newErrors);
+                        setIsAccountCreated(false);
+                    } else {
+                        console.log('Registro exitoso:', data.data.signUp);
+                        setErrors([]);
+                        setIsAccountCreated(true);
+                        console.log("token: ",data.data.signUp.token)
+                        localStorage.setItem('token', data.data.signUp.token);
+                        localStorage.setItem('user', JSON.stringify(data.data.signUp.user));
+                        
+                        // Redirigir a la página de inicio
+                        window.location.href = '/';
+                }}
             } catch (error) {
                 console.error('Error durante la creacion de la cuenta:', error);
                 newErrors.push('Error durante la creacion de la cuenta.');
                 setErrors(newErrors);
+                setIsAccountCreated(false);
             }
         }
     };
@@ -320,7 +330,7 @@ const Signup = () => {
                     
                 </div>
             </form>            
-                        {errors.length > 0 && (
+                    {errors.length > 0 && (
                     <ul className={`error-list text-black text-2xl absolute top-60 left-60 bg-gradient-to-t from-red-800 to-transparent p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
                         {errors.map((error, index) => (
                             <li key={index} className='error-item'>{error}</li>
@@ -328,6 +338,19 @@ const Signup = () => {
                         ))}
                     </ul>
                     )}
+
+                    {(errors.length === 0 && isAccountCreated) &&(
+                    <div className='text-black text-2xl absolute top-60 left-60 bg-gradient-to-t from-green-600 to-green-100 p-4 w-1/2 rounded-sm max-w-max'>
+                        <p>
+                            Account was created and stored.
+                            <br></br>
+                            Automatically login you in
+                            <br></br>
+                            Please wait...
+                        </p>
+                    </div>
+                    )}
+
         </div>
     );
 
