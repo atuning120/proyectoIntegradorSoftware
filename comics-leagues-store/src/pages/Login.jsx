@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom'
 import BackButton from '../components/BackButton';
 import { useNavigate } from 'react-router-dom'; // Hook para la navegación
 
+
 //opcional, pero convierte las password en *'s (solo en alert)
 const maskText = (text) => {
     return '*'.repeat(text.length);
@@ -31,11 +32,27 @@ const isAuthenticated = () => {
 	return false;
 };
 
+const getGradientClass = (errors,hasRespOK) =>{
+  if(errors.length === 0 && hasRespOK === true){
+    /*no error and backend said OK*/
+    return `bg-gradient-to-tr from-green-300 to-blue-800`;
+  }
+  else if(errors.length === 0){
+    /*no hay errores pero no se ha clickeado tampoco */
+    return `bg-gradient-to-tr from-cyan-800 to-gray-300`;
+  }
+  else if(errors.length > 0){
+    return `bg-gradient-to-tr from-red-700 to-blue-600`;
+  }
+  else return `bg-black`;
+};
+
 const Login = () => {
     const [errors, setErrors] = useState([]);
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
+    const [showPassword, setShowPassword] = useState(false);
 
     const [isLoginHovered, setIsLoginHovered] = useState(false);
     const [isSignUpHovered, setIsSignUpHovered] = useState(false);
@@ -51,7 +68,9 @@ const Login = () => {
     const [error, setError] = useState('');
     const [hasError, setHasError] = useState(false);
 
+    const [hasRespOK, setHasRespOK] = useState(false);
 
+    const [isLoading,setIsLoading] = useState(false);
 
   // URL de tu backend (asegúrate de cambiarlo si es necesario)
   const backendUrl = 'http://localhost:8080/query';
@@ -75,10 +94,14 @@ const Login = () => {
     if (newErrors.length > 0) {
       setErrors(newErrors);
       setHasError(true);
+      setTimeout(() =>{
+        setErrors([]);
+      }, 750);
       return;
     } else {
       setHasError(false);
       try {
+        setIsLoading(true);
         // Enviar la solicitud al servidor GraphQL
         const response = await fetch(backendUrl, {
           method: 'POST',
@@ -110,10 +133,17 @@ const Login = () => {
         if (response.ok) {
           const data = await response.json();
           if (data.errors) {
+            setIsLoading(false);
             console.log('Login failed:', data.errors[0].message);
             setError('Login failed');
+            newErrors.push('Login failed, credenciales incorrectas');
+            setErrors(newErrors);
+            setTimeout(() =>{
+              setErrors([]);
+            }, 750);
           } else {
             console.log('Login successful:', data.data.login);
+            setHasRespOK(true);
             // Guarda el token en el localStorage
             localStorage.setItem('token', data.data.login.token);
 
@@ -122,17 +152,23 @@ const Login = () => {
             setErrors([]); // limpia todos los errores
 
             // Redirigir a la página de inicio
-            window.location.href = '/';
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 350);
           }
         } else {
+          setIsLoading(false);
           console.log('Login failed:', response.statusText);
           setError('Login failed');
+          setHasRespOK(false);
         }
       } catch (error) {
+        setIsLoading(false);
         console.error('Error during login:', error);
         setError('An error occurred');
       }
     }
+
   };
     
 
@@ -147,111 +183,98 @@ const Login = () => {
     };
 
     return (
-        <div className='flex flex-col items-center w-full h-screen'>
-        <div className='relative bg-gradient-to-t from-blue-300 to-transparent p-2 rounded-lg flex flex-col items-center'>
-            <h1 className='text-3xl text-black font-bold max-w-[800px] max-h-[100px]'>
-            Welcome back to C.L.S.
+      <div className='flex h-screen justify-start items-start'>
+        <div className='flex-1 bg-gradient-to-br from-gray-100 to-gray-50 rounded-md p-12 h-4/5'>
+          <div className='bg-white p-6 rounded-xl mb-16 h-[106%]'>
+            <h1 className='font-montserrat text-5xl bg-gradient-to-tr from-cyan-300 to-cyan-800 rounded-sm bg-clip-text text-transparent font-extrabold'>
+              Welcome Back
             </h1>
-            <form className='px-4 py-2 mt-4 w-full max-w-md'>
-                <div className=''>
-                    <div className='usuario'>
-                            <label htmlFor='user' className='text-black text-2xl font-semibold'>User Name</label>
-                            <br></br>
-                            <input 
-                                placeholder='Enter user name here...'
-                                type='text'
-                                id='usuario'
-                                value={user}
-                                onChange={(evento) =>setUser(evento.target.value)}
-                                maxLength={16}
-                                style={{ width:'300px'}}
-                                className='w-full text-2xl mt-4' />
-                    </div>
-                    <br></br>
-                    <div className='password'>
-                        <label htmlFor='password' className='text-black text-2xl font-semibold'>Password</label>
-                        <br></br>
-                        <input
-                            placeholder="Enter password..."
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(evento) =>setPassword(evento.target.value)}
-                            style={{ width:'300px'}}
-                            className='w-full text-2xl mt-4'
-                            maxLength={16}
-                        />
-                    </div> 
-                </div>
-                <br></br>
+            <p className='font-montserrat text-2xl text-gray-400 flex items-center justify-center pr-40'>
+            Log in to C.L.S.
+            </p>
+          
+            <form className='h-screen ml-5 mt-16' >
+                      <div className='usuario'>
+                              <label htmlFor='user' className='text-black text-2xl font-semibold'>User Name</label>
+                              <br></br>
+                              <input 
+                                  placeholder='Enter user name here...'
+                                  type='text'
+                                  id='usuario'
+                                  value={user}
+                                  onChange={(evento) =>setUser(evento.target.value)}
+                                  maxLength={16}
+                                  style={{ width:'300px'}}
+                                  className={`w-full text-2xl rounded-md mt-3 py-2 hover:bg-gray-200`}/>
+                      </div>
+                      <br></br>
+                      <div className='password'>
+                          <label htmlFor='password' className='text-black text-2xl font-semibold'>Password</label>
+                          <br></br>
+                          <input
+                              placeholder="Enter password..."
+                              type="password"
+                              id="password"
+                              value={password}
+                              onChange={(evento) =>setPassword(evento.target.value)}
+                              style={{ width:'300px'}}
+                              className={`w-full text-2xl rounded-md mt-7 py-2 hover:bg-gray-200`}
+                              maxLength={16}
+                          />
+                      </div>
+                      <div className='flex space x-4 mt-16'>
 
-                <div className='relative top-10 right-6'>
-                    {/*boton de log-in*/}
-                    <button
-                    type='submit'
-                    className={`text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 transition-transform ${isLoginClicked ? 'button-clicked' : ''}`}
-                    style={{ 
-                        backgroundColor: hasError
-                          ? (isLoginHovered ? 'silver' : 'red')
-                          : (isLoginHovered ? '#50C878' : '#00A36C'),
-                        transition: 'background-color 0.4s ease',
-                        animation: isLoginClicked ? 'clickEffect 0.2s ease-out' : 'none'
-                      }}
-                    onMouseEnter={() => setIsLoginHovered(true)}
-                    onMouseLeave={() => setIsLoginHovered(false)}
-                    onClick={handleLoginClick}
-                    >
-                        Log-in
-                    </button>
+                      {/*boton de log-in*/}
+                      <button
+                                  type='submit'
+                                  className={`text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 transform hover:scale-105  hover:from-green-500 hover:to-blue-800 active:scale-95 bg-gradient-to-t from-green-300 to-blue-900 ${isLoginClicked ? 'button-clicked' : ''}`}
+                                  onClick={handleLoginClick}
+                                  >
+                                      Log-in
+                                  </button>
 
-                    {/*boton de sign-up*/}
-                    <Link
-                        to={'/Signup'} onClick={handleSignUpClick}
-                        className={`text-black py-1 px-3 text-3xl rounded-3xl mt-4 ml-6 mb-4 transition-transform ${isSignUpClicked ? 'button-clicked' : ''}`}
-                        style={{ 
-                            backgroundColor:
-                              (isSignUpHovered ? '#50C878' : '#00A36C'),
-                            transition: 'background-color 0.4s ease',
-                            animation: isSignUpClicked ? 'clickEffect 0.2s ease-out' : 'none'
-                          }}
-                        onMouseEnter={() => setIsSignUpHovered(true)}
-                        onMouseLeave={() => setIsSignUpHovered(false)}
-                        
-                    >
-                        Sign-up
-                    </Link>
-                </div>
+                        {/*boton de sign-up*/}
+                        <Link
+                                  to={'/Signup'} onClick={handleSignUpClick}
+                                  className="flex items-center justify-center text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 
+                          transform transition-all duration-300 
+                          bg-gradient-to-t from-green-300 to-blue-900 
+                          hover:from-green-600 hover:to-blue-800 
+                          active:scale-95 w-1/2.2 hover:scale-105"
+                                  >
+                                      Sign-up
+                                    
 
-                    <br /><br/>
+                                  </Link>
 
-                    {/* '?' Button */}
-                    <button
-                        className="bg-gray-500 hover:bg-gray-700 text-black text-3xl w-12 h-12 rounded-3xl ml-96"
-                        style={{ backgroundColor: isQuestionInHovered ? 'red' : 'darkred' }}
-                        onMouseEnter={() => setIsQuestionHovered(true)}
-                        onMouseLeave={() => setIsQuestionHovered(false)}
-                        onClick={() => alert('Si no tiene cuenta, haga click en "Sign-up"')}
-                    >
-                        ?
-                    </button>
-
-               {/*boton de regreso a log-in*/}
-               <div>
-                    <BackButton to={'../'} destination={'Home'}/>
-                </div>
-                </form>
-
+                      </div>
+            </form>
+          </div>
+        
         </div>
-                {errors.length > 0 && (
-                    <ul className={`error-list text-black text-2xl bg-gradient-to-t from-red-600 to-transparent p-4 rounded-xl`}style={{maxHeight:'600px',overflowY:'auto'}}>
-                        {errors.map((error, index) => (
-                            <li key={index} className='error-item'>{error}</li>
+        {/* de momento, no se muestra el listado de errores
+        {errors.length > 0 && (
+         <ul className={`error-list text-black text-2xl bg-gradient-to-t from-red-600 to-transparent p-4 rounded-xl`}style={{maxHeight:'600px',overflowY:'auto'}}>
+             {errors.map((error, index) => (
+                 <li key={index} className='error-item'>{error}</li>
 
-                        ))}
-                    </ul>
-                    )}
-    </div>
+             ))}
+         </ul>
+         )}
+         */}
+        <div className='hidden relative lg:flex h-full items-center justify-center flex-1'>
+        <div className={`w-60 h-60 rounded-full transition duration-100 ease-in-out ${isLoading? 'animate-pulse-spin': 'animate-spin'} ${getGradientClass(errors,hasRespOK)}`}> </div>
+        <div className='w-full h-1/2 absolute bottom-0 bg-white/10 backdrop-blur-lg'></div>
+
+          {
+            /*
+            <div className={`w-60 h-60 rounded-full transition duration-300 ease-in-out ${isLoading? 'animate-bounce': 'animate-spin'} ${getGradientClass(errors,hasRespOK)}`}> </div>
+            <div className={`w-60 h-60 rounded-full transition duration-300 ease-in-out ${isLoading? 'animate-spin': 'animate-none'} ${getGradientClass(errors,hasRespOK)}`}> </div>
+            */
+          }
+        </div>
+      </div>
     );
-};
+}
 
 export default Login;
