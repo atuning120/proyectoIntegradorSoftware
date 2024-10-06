@@ -227,7 +227,7 @@ const Login = () => {
                       {/*boton de log-in*/}
                       <button
                                   type='submit'
-                                  className={`text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 transform hover:scale-105  hover:from-green-500 hover:to-blue-800 active:scale-95 bg-gradient-to-t from-green-300 to-blue-900 ${isLoginClicked ? 'button-clicked' : ''}`}
+                                  className={`text-white py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 transform hover:scale-105 active:scale-95  bg-gray-900 hover:bg-gray-950 ${isLoginClicked ? 'button-clicked' : ''}`}
                                   onClick={handleLoginClick}
                                   >
                                       Log-in
@@ -236,10 +236,9 @@ const Login = () => {
                         {/*boton de sign-up*/}
                         <Link
                                   to={'/Signup'} onClick={handleSignUpClick}
-                                  className="flex items-center justify-center text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 
+                                  className="flex items-center justify-center text-white py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 
                           transform transition-all duration-300 
-                          bg-gradient-to-t from-green-300 to-blue-900 
-                          hover:from-green-600 hover:to-blue-800 
+                          bg-gray-900 hover:bg-gray-950
                           active:scale-95 w-1/2.2 hover:scale-105"
                                   >
                                       Sign-up
