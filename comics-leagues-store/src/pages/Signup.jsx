@@ -4,6 +4,7 @@ import '../animations.css';
 import Login from './Login';
 import BackButton from '../components/BackButton';
 
+
 const isAuthenticated = () => {
 	const token = localStorage.getItem('token');
   if(token){
@@ -24,6 +25,10 @@ const fetchWithTimeout = (url, options, timeout = 5000) => {
 
 const Signup = () => {
     const [errors, setErrors] = useState([]);
+    const [errorState,setErrorState] = useState(new Array(7).fill(false));
+    
+
+
     const [name,setName] = useState('');
     const [lastname,setLastname] = useState('');
     const [userAge, setUserAge] = useState('');
@@ -44,6 +49,8 @@ const Signup = () => {
 
     const [isAccountCreated, setIsAccountCreated] = useState(false);
   
+
+    const [isNameOK,setIsNameOK] = useState(false);
 
     const handleRoleButtonClick = (e) => {
         setIsTeacher(!isTeacher);
@@ -73,6 +80,8 @@ const Signup = () => {
         {
             setIsSignUpClicked(false);
         }, 300);
+            
+        let newErrorState = new Array(7).fill(false);
         let newErrors =[];
         console.log("ha hecho click: intentando crear cuenta");
 
@@ -81,40 +90,50 @@ const Signup = () => {
         
         if(name == ''){
             newErrors.push('Falta nombre en la casilla "Name".');
+            newErrorState[0] = true;
         }
         if(lastname == ''){
             newErrors.push('Falta apellido en la casilla "Last Name".');
+            newErrorState[1] = true;
         }
         if(userAge <= 1 || userAge > 120 || userAge === undefined){
             newErrors.push('Falta una edad valida en la casilla "Age".');
+            newErrorState[2] = true;
         }
         if(email == ''){
             newErrors.push('Falta su correo en la casilla "Email".');
+            newErrorState[3] = true;
         }
         if (!emailRegex.test(email)) {
             newErrors.push('Formato invalido de email detectado.');
+            newErrorState[3] = true;
         }
         if(user == ''){
             newErrors.push('Falta su nombre de usuario en la casilla "User Name".');
+            newErrorState[4] = true;
         }
         if(password == ''){
            newErrors.push('Falta contraseña en la casilla "Password".');
+           newErrorState[5] = true;
+        }
+        if(password.length < 4){
+            newErrors.push('Su contraseña es demasiado corta, debe usar al menos 4 characteres.');
+            newErrorState[5] = true;
         }
         if(phone == ''){
             newErrors.push('Falta numero de telefono en la casilla "Phone".');
+            newErrorState[6] = true;
         }
-        if(password.length < 4){
-           newErrors.push('Su contraseña es demasiado corta, debe usar al menos 4 characteres.');
-        }
-
+        
         if (newErrors.length > 0) {
             setErrors(newErrors);
             setHasError(true);
             setIsAccountCreated(false);
+            setErrorState(newErrorState);
             return;
         } else {
+            setErrorState(newErrorState);
             setHasError(false);
-
             try {
                 console.log("Enviando solicitud al backend para almacenar esta cuenta nueva");
 
@@ -170,12 +189,16 @@ const Signup = () => {
     
 
     return(
-        <div className='bg-gradient-to-t from-gray-200 to-transparent min-h-screen flex justify-center -mt-16'>
-            <h1 className='text-3xl text-black  font-bold bg-gradient-to-t from-gray-300 to-transparent py-5 px-2 mt-12 mb-auto rounded-sm ml-6'>
-                Sign-up: create your account
-            </h1>
-            <form className='mr-auto bg-gray-200 px-8 py-4 mb-auto mt-36 rounded-sm'>
-                <div className='parametros para crear cuenta'>
+        <div className='flex h-screen -translate-y-3'>
+            <div className='flex-1 w-1/2 flex justify-center rounded-md border-slate-200 border-2'>
+                <div className='bg-white p-6 rounded-xl h-full'>
+                    <h1 className='font-montserrat text-5xl bg-gradient-to-tr from-cyan-300 to-cyan-800 rounded-sm bg-clip-text text-transparent font-extrabold'>
+                    Create your account
+                    </h1>
+                    <p className='font-montserrat text-2xl text-gray-400 flex items-center justify-center pr-40'>
+                    <br></br>
+                    </p>
+            <form className=''>
                     <div className='name'>
                         <label htmlFor='name' className='text-black  text-2xl'>Name</label>
                         <input 
@@ -186,7 +209,9 @@ const Signup = () => {
                             onChange={(evento) =>setName(evento.target.value)}
                             maxLength={16}
                             style={{ width:'300px',marginLeft:'71px'}}
-                            className='w-full text-2xl mt-4' />
+                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
+
+                            {errorState[0] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, name can't be blank"}</p>} {/* Error Message */}
                     </div>
                     <div className='lastname'>
                         <label htmlFor='lastname' className='text-black  text-2xl'>Last Name</label>
@@ -198,7 +223,9 @@ const Signup = () => {
                             onChange={(evento) =>setLastname(evento.target.value)}
                             maxLength={16}
                             style={{ width:'300px',marginLeft:'15px'}}
-                            className='w-full text-2xl mt-4' />
+                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
+
+                            {errorState[1] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, last name can't be blank"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='age'>
@@ -213,9 +240,9 @@ const Signup = () => {
                             max={120}
                             style={{ width:'300px',marginLeft:'93px'}}
                             
-                            className='w-full text-2xl mt-4' />
+                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
                             
-                            
+                            {errorState[2] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, age out of range(2~120) or missing"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='email'>
@@ -228,7 +255,8 @@ const Signup = () => {
                             onChange={(evento) =>setEmail(evento.target.value)}
                             maxLength={20}
                             style={{ width:'300px',marginLeft:'76.5px'}}
-                            className='w-full text-2xl mt-4' />
+                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
+                            {errorState[3] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, email can't be blank or is invalid"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='usuario'>
@@ -241,7 +269,8 @@ const Signup = () => {
                             onChange={(evento) =>setUser(evento.target.value)}
                             maxLength={16}
                             style={{ width:'300px',marginLeft:'10px'}}
-                            className='w-full text-2xl mt-4' />
+                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
+                            {errorState[4] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, username can't be blank"}</p>} {/* Error Message */}
                     </div>
                     
                     <div className='password'>
@@ -253,9 +282,9 @@ const Signup = () => {
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
                             style={{ width:'300px',marginLeft:'30px'}}
-                            className='w-full text-2xl mt-4'
-                            maxLength={16}
-                        />
+                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200'
+                            maxLength={16} />
+                            {errorState[5] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, pwd can't be blank or is too short"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='phone'>
@@ -268,7 +297,8 @@ const Signup = () => {
                             onChange={(evento) =>setPhone(evento.target.value)}
                             maxLength={16}
                             style={{ width:'300px',marginLeft:'67px'}}
-                            className='w-full text-2xl mt-4' />
+                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
+                            {errorState[6] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, phone can't be blank"}</p>} {/* Error Message */}
                     </div>
                     
                     <div className='mt-6'>
@@ -276,7 +306,7 @@ const Signup = () => {
                             <p className='text-black text-2xl'>Choose your role:</p>
                             <h3 className='text-black text-2xl mb-4 ml-52 absolute top-0'>{isTeacher ? 'You are a teacher' : 'You are a student'}</h3>
                         </div>
-                    <div className='ml-52 mt-4'>
+                    <div className='ml-52'>
                         <input
                             type='radio'
                             id='student'
@@ -306,14 +336,7 @@ const Signup = () => {
                     {/*boton de sign-up*/}
                         <button     
                         type='submit'
-                        className={`text-black py-3 px-6 text-3xl rounded-3xl mt-4 ml-12 mb-4 transition-transform ${isSignUpClicked ? 'button-clicked' : ''}`}
-                        style={{ 
-                            backgroundColor: hasError
-                              ? (isSignUpHovered ? 'silver' : 'red')
-                              : (isSignUpHovered ? '#50C878' : '#00A36C'),
-                            transition: 'background-color 0.4s ease',
-                            animation: isSignUpClicked ? 'clickEffect 0.2s ease-out' : 'none'
-                          }}
+                        className={`text-white py-3 px-6 mt-7 text-3xl rounded-3xl ml-6 mb-4 transform hover:scale-105 active:scale-95  bg-gray-900 hover:bg-gray-950 ${isSignUpClicked ? 'button-clicked' : ''}`}
                         onMouseEnter={() => setIsSignUpHovered(true)}
                         onMouseLeave={() => setIsSignUpHovered(false)}
                         onClick={handleSignUpClick}
@@ -328,28 +351,23 @@ const Signup = () => {
                     <BackButton to={'/login'} destination={'log-in'}/>
                 </div>
                     
+
+            </form>
                 </div>
-            </form>            
-                    {errors.length > 0 && (
-                    <ul className={`error-list text-black text-2xl absolute top-60 left-60 bg-gradient-to-t from-red-800 to-transparent p-4 w-1/4 rounded-sm`}style={{maxHeight:'600px',overflowY:'auto'}}>
-                        {errors.map((error, index) => (
-                            <li key={index} className='error-item'>{error}</li>
 
-                        ))}
-                    </ul>
-                    )}
-
-                    {(errors.length === 0 && isAccountCreated) &&(
-                    <div className='text-black text-2xl absolute top-60 left-60 bg-gradient-to-t from-green-600 to-green-100 p-4 w-1/2 rounded-sm max-w-max'>
-                        <p>
-                            Account was created and stored.
-                            <br></br>
-                            Automatically login you in
-                            <br></br>
-                            Please wait...
-                        </p>
-                    </div>
-                    )}
+            </div>
+            <div className='flex-1 flex justify-center items-center h-screen'>
+                <div className='w-full h-full overflow-hidden rounded-md border-gray-400 border-8'>
+                    <img
+                        src='src\assets\ai_bar.webp'
+                        alt='imagen placeholder'
+                        className='w-full h-full object-cover' 
+                    />
+                </div>
+            </div>
+    
+            
+            
 
         </div>
     );

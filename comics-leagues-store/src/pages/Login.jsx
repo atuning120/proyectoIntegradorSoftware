@@ -183,9 +183,9 @@ const Login = () => {
     };
 
     return (
-      <div className='flex h-screen justify-start items-start'>
-        <div className='flex-1 bg-gradient-to-br from-gray-100 to-gray-50 rounded-md p-12 h-4/5'>
-          <div className='bg-white p-6 rounded-xl mb-16 h-[106%]'>
+      <div className='flex h-screen -translate-y-3'>
+        <div className='flex-1 h-[75%] flex justify-center rounded-md border-slate-200 border-2'>
+          <div className='bg-white p-6 rounded-xl'>
             <h1 className='font-montserrat text-5xl bg-gradient-to-tr from-cyan-300 to-cyan-800 rounded-sm bg-clip-text text-transparent font-extrabold'>
               Welcome Back
             </h1>
