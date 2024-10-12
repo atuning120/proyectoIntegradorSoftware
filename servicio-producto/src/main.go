@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/crud"
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/connection" // Importa tu archivo connection
+	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/connection" 
 )
 
 func main() {
