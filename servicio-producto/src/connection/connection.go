@@ -42,5 +42,3 @@ func ConnectToMongoDB() (*mongo.Client, error) {
 	}
 	return clientInstance, clientInstanceError
 }
-
-// Obtener la colección de productos
