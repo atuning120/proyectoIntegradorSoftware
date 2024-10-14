@@ -1,38 +1,30 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
+	"net/http"
+	"os"
 
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/crud"
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/connection" 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/graph"
 )
 
+const defaultPort = "8080"
+
 func main() {
-	// Obtener la conexión a MongoDB desde connection.go
-	client, err := connection.ConnectToMongoDB()
-	if err != nil {
-		log.Fatalf("Error al conectar con MongoDB: %v", err)
-	}
-	defer client.Disconnect(context.TODO())
 
-	// Crear un producto de ejemplo
-	product := crud.Product{
-		Nombre:      "Producto de prueba",
-		Descripcion: "Este es un producto de ejemplo para pruebas",
-		Precio:      19.99,
-		Imagen:      "imagen_url",
-		Categoria:   "Tentáculos",
-		Nivel:       "Avanzado",
-		Puntuacion:  4.5,
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = defaultPort
 	}
 
-	// Insertar el producto
-	err = crud.CreateProduct(client, product)
-	if err != nil {
-		log.Fatalf("Error al crear el producto: %v", err)
-	} else {
-		fmt.Println("Producto creado con éxito")
-	}
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
+
 }
