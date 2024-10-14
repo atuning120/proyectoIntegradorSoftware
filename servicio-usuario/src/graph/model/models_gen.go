@@ -2,25 +2,35 @@
 
 package model
 
-type Book struct {
-	ID     string `json:"id"`
-	Title  string `json:"title"`
-	Author *User  `json:"author"`
+type AuthPayload struct {
+	Token string `json:"token"`
+	User  *User  `json:"user"`
 }
 
 type Mutation struct {
 }
 
-type NewBook struct {
-	Title  string `json:"title"`
-	UserID string `json:"userId"`
-	Name   string `json:"name"`
+type NewUserInput struct {
+	Username string `json:"username"`
+	Nombre   string `json:"nombre"`
+	Apellido string `json:"apellido"`
+	Correo   string `json:"correo"`
+	Telefono string `json:"telefono"`
+	Rol      string `json:"rol"`
+	Edad     int    `json:"edad"`
+	Password string `json:"password"`
 }
 
 type Query struct {
 }
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID       string `json:"id"`
+	Nombre   string `json:"nombre"`
+	Apellido string `json:"apellido"`
+	Username string `json:"username"`
+	Correo   string `json:"correo"`
+	Telefono string `json:"telefono"`
+	Rol      string `json:"rol"`
+	Edad     int    `json:"edad"`
 }

@@ -1,13 +1,35 @@
 type User {
   id: ID!
-  name: String!
+  nombre: String!
+  apellido: String!
+  username: String!
+  correo: String!
+  telefono: String!
+  rol: String!
+  edad: Int!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type Query {
+  getUser(username: String!): User
 }
 
 type Mutation {
-  createBook(input: NewBook!): Book!
+  login(username: String!, password: String!): AuthPayload!
+  signUp(input: NewUserInput!): AuthPayload! # Añade la mutación signUp
 }
 
-type Query { 
-  books: [Book!]!
+input NewUserInput {
+  username: String!
+  nombre: String!
+  apellido: String!
+  correo: String!
+  telefono: String!
+  rol: String!
+  edad: Int!
+  password: String!
 }
-

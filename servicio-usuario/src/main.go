@@ -1,38 +1,44 @@
 package main
 
 import (
-	"context"
 	"log"
+	"net/http"
+	"os"
 
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/src/back-end/connection"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-usuario/src/graph" // Importa graph correctamente
+	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
 
 func main() {
 
-	client, err := connection.ConnectToMongoDB()
-	if err != nil {
-		log.Fatalf("Fallo en la conexión: %v", err)
-	}
+	port := os.Getenv("PORT")
 
-	// Asegurarse de desconectar al finalizar
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			log.Fatalf("Error al desconectar de MongoDB: %v", err)
-		}
-	}()
-
-	/*port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	// Configuración del servidor GraphQL
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{ // Ajusta la llamada con graph.Config
+		Resolvers:  &graph.Resolver{},      // Resolver definido en graph/resolver.go
+		Directives: graph.DirectiveRoot{},  // Configura las directivas si es necesario
+		Complexity: graph.ComplexityRoot{}, // Configura la complejidad si es necesario
+	}))
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"}, // Cambia esto a la URL de tu frontend
+		AllowCredentials: true,
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+		AllowedHeaders:   []string{"*"},
+	})
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))*/
+	// Configura las rutas para el Playground y las queries
+	http.Handle("/", playground.Handler("GraphQL Playground", "/query"))
+	http.Handle("/query", c.Handler(srv))
+
+	log.Printf("Conecta a http://localhost:%s/ para el GraphQL Playground", port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
