@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // Estructura del Producto
@@ -15,7 +16,7 @@ type Product struct {
 	Precio      float64 `bson:"precio"`
 	Imagen      string  `bson:"imagen"`
 	Categoria   string  `bson:"categoria"`
-	Nivel       string  `bson:"nivel"` // Puede ser: "basico", "medio" o "avanzado"
+	Nivel       string  `bson:"nivel"`
 	Puntuacion  float64 `bson:"puntuacion"`
 }
 
@@ -64,4 +65,32 @@ func DeleteProduct(client *mongo.Client, filter bson.M) error {
 	}
 	fmt.Println("Producto eliminado con éxito")
 	return nil
+}
+
+func GetAllCursos(client *mongo.Client) ([]Product, error) {
+	collection := client.Database("Producto").Collection("producto")
+	cursor, err := collection.Find(context.TODO(), bson.D{})
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener los cursos: %v", err)
+	}
+	var cursos []Product
+	if err = cursor.All(context.TODO(), &cursos); err != nil {
+		return nil, fmt.Errorf("error al decodificar los cursos: %v", err)
+	}
+	return cursos, nil
+}
+
+// Obtener los 4 mejores cursos por puntuación
+func GetTopCursos(client *mongo.Client) ([]Product, error) {
+	collection := client.Database("Producto").Collection("producto")
+	opts := options.Find().SetSort(bson.D{{"puntuacion", -1}}).SetLimit(4)
+	cursor, err := collection.Find(context.TODO(), bson.D{}, opts)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener los top cursos: %v", err)
+	}
+	var topCursos []Product
+	if err = cursor.All(context.TODO(), &topCursos); err != nil {
+		return nil, fmt.Errorf("error al decodificar los top cursos: %v", err)
+	}
+	return topCursos, nil
 }
