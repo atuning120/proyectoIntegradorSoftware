@@ -1,45 +1,21 @@
 import React, { useState } from 'react';
+import { gql, useQuery } from '@apollo/client';
 
-const products = [
-  {
-    id: 1,
-    name: 'Curso 1',
-    description: 'Descripcion Curso 1',
-    price: 1000,
-    image: 'https://via.placeholder.com/150',
-    category: 'Categoria 1',
-    level: 'Basico',
-  },
-  {
-    id: 2,
-    name: 'Curso 2',
-    description: 'Descripcion Curso 2',
-    price: 2000,
-    image: 'https://via.placeholder.com/150',
-    category: 'Categoria 1',
-    level: 'medio',
-  },
-  {
-    id: 3,
-    name: 'Curso 3',
-    description: 'Descripcion Curso 3',
-    price: 3000,
-    image: 'https://via.placeholder.com/150',
-    category: 'Categoria 2',
-    level: 'Avanzado',
-  },
-  {
-    id: 4,
-    name: 'Curso 4',
-    description: 'Descripcion Curso 4',
-    price: 4000,
-    image: 'https://via.placeholder.com/150',
-    category: 'Categoria 2',
-    level: 'Basico',
-  },
-];
+const GET_CURSOS = gql`
+  query GetCursos {
+    cursos {
+      nombre
+      descripcion
+      precio
+      imagen
+      categoria
+      nivel
+    }
+  }
+`;
 
 const CursosPage = () => {
+  const { loading, error, data } = useQuery(GET_CURSOS);
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
@@ -61,15 +37,28 @@ const CursosPage = () => {
     setSortOrder(e.target.value);
   };
 
+  // Si los datos están cargando
+  if (loading) return <p>Cargando cursos...</p>;
+
+  // Si hay un error al obtener los datos
+  // if (error) return <p>Error al cargar los cursos: {error.message}</p>;
+  if (error) {
+    console.error(error); // Mostrar el error completo en la consola del navegador
+    return <p>Error al cargar los cursos: {error.message}</p>;
+  }
+  
+  // Obtener los cursos desde los datos de la query
+  const products = data.cursos;
+
   const filteredProducts = products
-  .filter((product) => (selectedCourse ? product.name === selectedCourse : true))
-  .filter((product) => (selectedCategory ? product.category === selectedCategory : true))
-  .filter((product) => (selectedLevel ? product.level === selectedLevel : true))
+  .filter((product) => (selectedCourse ? product.nombre === selectedCourse : true))
+  .filter((product) => (selectedCategory ? product.categoria === selectedCategory : true))
+  .filter((product) => (selectedLevel ? product.nivel === selectedLevel : true))
   .sort((a, b) => {
     if (sortOrder === 'priceAsc') {
-      return a.price - b.price;
+      return a.precio - b.precio;
     } else if (sortOrder === 'priceDesc') {
-      return b.price - a.price;
+      return b.precio - a.precio;
     }
     return 0;
   });
@@ -89,8 +78,8 @@ const CursosPage = () => {
         >
           <option value="">Todos los cursos</option>
           {products.map((product) => (
-            <option key={product.id} value={product.name}>
-              {product.name}
+            <option key={product._id} value={product.nombre}>
+              {product.nombre}
             </option>
           ))}
         </select>
@@ -106,9 +95,9 @@ const CursosPage = () => {
           className="mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           >
             <option value="">Todas las categorias</option>
-              {[...new Set(products.map((product) => product.category))].map((category) => (
-            <option key={category} value={category}>
-              {category}
+              {[...new Set(products.map((product) => product.categoria))].map((categoria) => (
+            <option key={categoria} value={categoria}>
+              {categoria}
             </option>
             ))}
           </select>
@@ -124,9 +113,9 @@ const CursosPage = () => {
           className="mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           >
             <option value="">Todos los niveles</option>
-              {[...new Set(products.map((product) => product.level))].map((level) => (
-            <option key={level} value={level}>
-              {level}
+              {[...new Set(products.map((product) => product.nivel))].map((nivel) => (
+            <option key={nivel} value={nivel}>
+              {nivel}
             </option>
             ))}
           </select>
@@ -149,20 +138,20 @@ const CursosPage = () => {
 
       {/* Mostrar los cursos*/}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-  {filteredProducts.map((product) => (
-    <div key={product.id} className="bg-white rounded-lg shadow-md p-4 flex flex-col">
+  {filteredProducts.map((product, index) => (
+    <div key={index} className="bg-white rounded-lg shadow-md p-4 flex flex-col">
       <img
-        src={product.image}
-        alt={product.name}
+        src={product.imagen}
+        alt={product.nombre}
         className="w-full h-48 object-cover rounded-md mb-4"
       />
-      <h3 className="text-lg font-semibold">{product.name}</h3>
-      <p className="text-gray-600 flex-grow">{product.description}</p>
-      <p className="text-gray-600 flex-grow">{product.category}</p>
-      <p className="text-gray-600 flex-grow">{product.level}</p>
+      <h3 className="text-lg font-semibold">{product.nombre}</h3>
+      <p className="text-gray-600 flex-grow">{product.descripcion}</p>
+      <p className="text-gray-600 flex-grow">{product.categoria}</p>
+      <p className="text-gray-600 flex-grow">{product.nivel}</p>
       <div className="mt-4">
         <span className="text-xl font-bold">
-          ${product.price.toLocaleString('es-ES')}
+          ${product.precio.toLocaleString('es-ES')}
         </span>
       </div>
       <button className="mt-4 w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-300">
@@ -171,6 +160,7 @@ const CursosPage = () => {
     </div>
   ))}
 </div>
+
     </div>
   );
 };

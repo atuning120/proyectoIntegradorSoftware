@@ -52,15 +52,15 @@ const Login = () => {
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
-    const [showPassword, setShowPassword] = useState(false);
+    // const [showPassword, setShowPassword] = useState(false);
 
-    const [isLoginHovered, setIsLoginHovered] = useState(false);
-    const [isSignUpHovered, setIsSignUpHovered] = useState(false);
-    const [isQuestionInHovered, setIsQuestionHovered] = useState(false);
+    // const [isLoginHovered, setIsLoginHovered] = useState(false);
+    // const [isSignUpHovered, setIsSignUpHovered] = useState(false);
+    // const [isQuestionInHovered, setIsQuestionHovered] = useState(false);
 
 
-    const [loginButtonColor, setLoginButtonColor] = useState('#00A36C');
-    const [signUpButtonColor, setSignUpButtonColor] = useState('#00A36C');
+    // const [loginButtonColor, setLoginButtonColor] = useState('#00A36C');
+    // const [signUpButtonColor, setSignUpButtonColor] = useState('#00A36C');
     
     const [isSignUpClicked,setIsSignUpClicked] = useState(false);
     const [isLoginClicked,setIsLoginClicked] = useState(false);
