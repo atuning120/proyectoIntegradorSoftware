@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
+import {Image} from "@nextui-org/react";
 
 const GET_CURSOS = gql`
   query GetCursos {
@@ -140,9 +141,11 @@ const CursosPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
   {filteredProducts.map((product, index) => (
     <div key={index} className="bg-white rounded-lg shadow-md p-4 flex flex-col">
-      <img
+      <Image
+        isBlurred
+        width={240}
         src={product.imagen}
-        alt={product.nombre}
+        alt="NextUI Album Cover"
         className="w-full h-48 object-cover rounded-md mb-4"
       />
       <h3 className="text-lg font-semibold">{product.nombre}</h3>
