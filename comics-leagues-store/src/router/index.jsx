@@ -41,6 +41,18 @@ export const router= createBrowserRouter([
                 path:'userprofile',
                 element: <UserProfile />
             },
+            {
+                path:'userprofile/perfil',
+                element: <h1>Componente para mostrar los datos del usuario, en el proyecto esta en la carpeta de router</h1>
+            },
+            {
+                path:'userprofile/setPerfil',
+                element: <h1>Componente para modificar datos del usuario, en el proyecto esta en la carpeta de router</h1>
+            },
+            {
+                path:'userprofile/Historial',
+                element: <h1>Componente para mostrar las compras del usuario, en el proyecto esta en la carpeta de router</h1>
+            },
             
         ]
     },
