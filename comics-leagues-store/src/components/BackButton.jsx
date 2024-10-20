@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom'
 
 const BackButton = ({ to, destination }) => {
-    const label = `Back to ${destination}`;
+    const label = `Regresar`;
 
     const handleClick = () => {
         // Scroll to the top of the page

@@ -31,19 +31,19 @@ const Sidebar = () =>{
 
     return(
         <div className="w-72">
-            <div className={`bg-gray-950 h-screen p-5 pt-8 ${isOpen? "w-72":"w-24"} duration-300 relative`}>
+            <div className={`bg-gray-950 h-screen p-5 pt-8 ${isOpen? "w-72":"w-28"} duration-300 relative`}>
                 <BsArrowLeftSquareFill  className={`bg-gray-900 text-gray-200 
-                text-3xl rounded-full absolute -right-5 top-7 border
+                text-3xl rounded-full absolute -right-5 top-10 border
                 border-gray-900 cursor-pointer
                 ${!isOpen && "rotate-180"}`}
                 onClick={() => setIsOpen(!isOpen)}/>
 
-                <IoEyeSharp className={`bg-amber-500 text-4xl
+                <IoEyeSharp className={`bg-gradient-to-tr from-cyan-200 to-cyan-900 text-4xl
                 rounded cursor-pointer block float-left mr-2
                  duration-500 ${isOpen && "rotate-[360deg]"}`}/>
 
 
-            <h1 className={`text-white origin-left font-medium text-2xl mt-1 ${!isOpen && "scale-0"}`}>
+            <h1 className={`text-white origin-left font-medium text-3xl mt-2 ml-20 ${!isOpen && "scale-0"}`}>
                 {isOpen ? 'Ajustes' : 'A'}
             </h1>
             <div className={`flex items-center rounded-md bg-gray-900 mt-12 ${!isOpen ? "px-4" : "px-2.5"} py-2`}>

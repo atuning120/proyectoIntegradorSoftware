@@ -186,19 +186,19 @@ const Login = () => {
       <div className='flex h-screen -translate-y-3'>
         <div className='flex-1 flex justify-center rounded-md border-slate-200 border-2'>
           <div className='bg-white pt-5 rounded-xl'>
-            <h1 className='font-montserrat text-5xl bg-gradient-to-tr from-cyan-300 to-cyan-800 rounded-sm bg-clip-text text-transparent font-extrabold'>
-              Welcome Back
+            <h1 className='font-montserrat text-6xl bg-gradient-to-tr from-cyan-300 to-cyan-800 rounded-sm bg-clip-text text-transparent font-extrabold'>
+              Bienvenido
             </h1>
-            <p className='font-montserrat text-2xl text-gray-400 flex items-center justify-center pr-40'>
-            Log in to C.L.S.
+            <p className='font-montserrat text-2xl text-gray-400 flex items-center justify-center'>
+            a C.L.S.
             </p>
           
             <form className='h-screen ml-5 mt-16' >
                       <div className='usuario'>
-                              <label htmlFor='user' className='text-black text-2xl font-semibold'>User Name</label>
+                              <label htmlFor='user' className='text-black text-2xl font-semibold'>Nombre de usuario</label>
                               <br></br>
                               <input 
-                                  placeholder='Enter user name here...'
+                                  placeholder='Alias aquí...'
                                   type='text'
                                   id='usuario'
                                   value={user}
@@ -209,10 +209,10 @@ const Login = () => {
                       </div>
                       <br></br>
                       <div className='password'>
-                          <label htmlFor='password' className='text-black text-2xl font-semibold'>Password</label>
+                          <label htmlFor='password' className='text-black text-2xl font-semibold'>Contraseña</label>
                           <br></br>
                           <input
-                              placeholder="Enter password..."
+                              placeholder="Clave aquí..."
                               type="password"
                               id="password"
                               value={password}
@@ -222,7 +222,7 @@ const Login = () => {
                               maxLength={16}
                           />
                       </div>
-                      <div className='flex space x-4 mt-16'>
+                      <div className='flex space mt-16 -translate-x-8'>
 
                       {/*boton de log-in*/}
                       <button
@@ -230,7 +230,7 @@ const Login = () => {
                                   className={`text-white py-3 px-6 text-3xl rounded-3xl mt-4 ml-6 mb-4 transform hover:scale-105 active:scale-95  bg-gray-900 hover:bg-gray-950 ${isLoginClicked ? 'button-clicked' : ''}`}
                                   onClick={handleLoginClick}
                                   >
-                                      Log-in
+                                      Entrar
                                   </button>
 
                         {/*boton de sign-up*/}
@@ -241,7 +241,7 @@ const Login = () => {
                           bg-gray-900 hover:bg-gray-950
                           active:scale-95 w-1/2.2 hover:scale-105"
                                   >
-                                      Sign-up
+                                      Unirse
                                     
 
                                   </Link>
