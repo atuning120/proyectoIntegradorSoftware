@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Hook para la navegación
 import {Button} from "@nextui-org/react";
-import Sidebar from "../components/Sidebar"
+import Sidebar from "../components/shared/Sidebar"
 
 //Cerrar sesion
 const logout = () => {
