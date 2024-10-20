@@ -7,6 +7,9 @@ import SignUp from '../pages/Signup.jsx';
 import Policies from "../pages/Policies.jsx";
 import Privacy from "../pages/TermsOfUse.jsx";
 import UserProfile from '../pages/UserProfile.jsx';
+import Historial from '../components/Historial.jsx';
+import Perfil from '../components/Perfil.jsx';
+import SetPerfil from '../components/SetPerfil.jsx';
 
 export const router= createBrowserRouter([
     {
@@ -43,15 +46,15 @@ export const router= createBrowserRouter([
             },
             {
                 path:'userprofile/perfil',
-                element: <h1>Componente para mostrar los datos del usuario, en el proyecto esta en la carpeta de router</h1>
+                element: <Perfil>Componente para mostrar los datos del usuario, en el proyecto esta en la carpeta de router</Perfil>
             },
             {
                 path:'userprofile/setPerfil',
-                element: <h1>Componente para modificar datos del usuario, en el proyecto esta en la carpeta de router</h1>
+                element: <SetPerfil>Componente para modificar datos del usuario, en el proyecto esta en la carpeta de router</SetPerfil>
             },
             {
                 path:'userprofile/Historial',
-                element: <h1>Componente para mostrar las compras del usuario, en el proyecto esta en la carpeta de router</h1>
+                element: <Historial>Componente para mostrar las compras del usuario, en el proyecto esta en la carpeta de router</Historial>
             },
             
         ]
