@@ -7,12 +7,13 @@ import Sidebar from "../components/Sidebar"
 export const RootLayout = () => {
 
     const {pathname}= useLocation();
+    const isUserProfilePage = pathname.includes('/userprofile'); // Detecta cualquier ruta que contenga /userprofile
 
     return <div className='h-screen flex flex-col font-montserrat'>
         <Navbar/>
 
 
-        {pathname.endsWith('/userprofile') && <Sidebar />}
+        {isUserProfilePage && <Sidebar/>}
 
         {pathname === '/' && (<Banner />)}
 

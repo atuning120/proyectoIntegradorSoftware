@@ -16,9 +16,11 @@ const isAuthenticated = () => {
 //Si el usuario está logueado, extraer la primer letra del username
 const PrimerLetra=()=>{
 	if(isAuthenticated()){
+		
 		const token = localStorage.getItem('token');
 		const user = JSON.parse(localStorage.getItem('user'));
 		return user.username[0].toUpperCase();
+		
 	}else{
 		return '\u{02726}'; 
 	}
