@@ -56,6 +56,10 @@ export const router= createBrowserRouter([
                 path:'userprofile/Historial',
                 element: <Historial>Componente para mostrar las compras del usuario, en el proyecto esta en la carpeta de router</Historial>
             },
+            {
+                path:'paySystem',
+                element:<div>pagar epicamente anashei</div>
+            },
             
         ]
     },
