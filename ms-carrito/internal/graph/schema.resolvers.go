@@ -8,7 +8,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/proyectoIntegradorSoftware/ms-producto/graph/model"
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/graph/model"
 )
 
 // CreateTodo is the resolver for the createTodo field.

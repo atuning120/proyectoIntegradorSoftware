@@ -1,6 +1,5 @@
-module github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-usuario/src
-
-go 1.23.0
+module github.com/atuning120/proyectoIntegradorSoftware/ms-usuario
+go 1.23.1
 
 require (
 	github.com/99designs/gqlgen v0.17.49

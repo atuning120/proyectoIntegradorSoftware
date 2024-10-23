@@ -13,3 +13,9 @@ func ConnectToRabbit() (*amqp.Connection, error) {
 	}
 	return conn, nil
 }
+
+func FailedailOnError(err error, msg string) {
+	if err != nil {
+		log.Panicf("%s: %s", msg, err)
+	}
+}

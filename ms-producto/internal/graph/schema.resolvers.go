@@ -8,9 +8,9 @@ import (
 	"context"
 	"fmt"
 
-	crud "github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/CRUD"
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/connection"
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/graph/model"
+	crud "github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/internal/CRUD"
+	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/internal/connection"
+	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/internal/graph/model"
 )
 
 // Resolver de la Mutation crearCurso
