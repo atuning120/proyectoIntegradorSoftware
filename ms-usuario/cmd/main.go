@@ -7,12 +7,17 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/graph"
+	usuariovalidate "github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/rabbit/usuario_validate"
 	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
 
 func main() {
+	go func() {
+		usuariovalidate.ValidarUsuarioRespuesta()
+	}()
 
 	port := os.Getenv("PORT")
 
@@ -40,4 +45,5 @@ func main() {
 
 	log.Printf("Conecta a http://localhost:%s/ para el GraphQL Playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
+
 }

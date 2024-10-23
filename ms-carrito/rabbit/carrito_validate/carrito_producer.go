@@ -18,12 +18,12 @@ func ValidarUsuarioRPC(idUsuario string) (esValido bool, err error) {
 	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
 
 	q, err := ch.QueueDeclare(
-		"rpc_usuario", // name
-		true,          // durable
-		false,         // delete when unused
-		false,         // exclusive
-		false,         // no-wait
-		nil,           // arguments
+		"",    // name
+		false, // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
 	)
 	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
 
@@ -41,10 +41,10 @@ func ValidarUsuarioRPC(idUsuario string) (esValido bool, err error) {
 	corrId := randomString(32)
 
 	err = ch.Publish(
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
+		"",            // exchange
+		"rpc_usuario", // routing key
+		false,         // mandatory
+		false,         // immediate
 		amqp.Publishing{
 			DeliveryMode:  amqp.Persistent,
 			ContentType:   "text/plain",

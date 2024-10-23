@@ -1,6 +1,6 @@
 // src/connection/connection.go
 
-package connection
+package db
 
 import (
 	"context"

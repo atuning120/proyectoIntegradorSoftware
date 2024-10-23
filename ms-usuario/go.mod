@@ -1,13 +1,15 @@
 module github.com/atuning120/proyectoIntegradorSoftware/ms-usuario
+
 go 1.23.1
 
 require (
 	github.com/99designs/gqlgen v0.17.49
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/rs/cors v1.11.1
+	github.com/streadway/amqp v1.1.0
 	github.com/vektah/gqlparser/v2 v2.5.16
 	go.mongodb.org/mongo-driver v1.16.1
-	golang.org/x/crypto v0.27.0
+	golang.org/x/crypto v0.28.0
 )
 
 require (
@@ -25,5 +27,5 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/text v0.18.0 // indirect
+	golang.org/x/text v0.19.0 // indirect
 )
