@@ -1,28 +1,29 @@
 package carritovalidate
 
 import (
+	"fmt"
 	"log"
+	"math/rand"
 
 	"github.com/proyectoIntegradorSoftware/ms-carrito/rabbit"
+	"github.com/streadway/amqp"
 )
 
-func ReceiveMessage() {
+func ValidarUsuarioRPC(idUsuario string) (esValido bool, err error) {
 
 	conn, err := rabbit.ConnectToRabbit()
 	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
-	defer conn.Close()
 
 	ch, err := conn.Channel()
 	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
-	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
-		false,   // durable
-		false,   // delete when unused
-		false,   // exclusive
-		false,   // no-wait
-		nil,     // arguments
+		"rpc_usuario", // name
+		true,          // durable
+		false,         // delete when unused
+		false,         // exclusive
+		false,         // no-wait
+		nil,           // arguments
 	)
 	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
 
@@ -35,16 +36,47 @@ func ReceiveMessage() {
 		false,  // no-wait
 		nil,    // args
 	)
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	rabbit.FailedailOnError(err, "Failed to register a consumer")
 
-	var forever chan struct{}
+	corrId := randomString(32)
 
-	go func() {
-		for d := range msgs {
+	err = ch.Publish(
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			DeliveryMode:  amqp.Persistent,
+			ContentType:   "text/plain",
+			CorrelationId: corrId,
+			ReplyTo:       q.Name,
+			Body:          []byte(idUsuario),
+		})
+
+	for d := range msgs {
+		if corrId == d.CorrelationId {
 			log.Printf("Received a message: %s", d.Body)
+			if string(d.Body) == "true" {
+				return true, nil
+			} else if string(d.Body) == "false" {
+				return false, nil
+			} else {
+				return false, fmt.Errorf("unexpected response: %s", d.Body)
+			}
 		}
-	}()
+	}
+	return false, nil
+}
 
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+// Generar un id aleatorio para cada RPC
+func randomString(l int) string {
+	bytes := make([]byte, l)
+	for i := 0; i < l; i++ {
+		bytes[i] = byte(randInt(65, 90))
+	}
+	return string(bytes)
+}
+
+func randInt(min int, max int) int {
+	return min + rand.Intn(max-min)
 }

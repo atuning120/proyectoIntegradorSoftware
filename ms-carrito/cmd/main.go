@@ -1,7 +1,5 @@
 package main
 
-import carritovalidate "github.com/proyectoIntegradorSoftware/ms-carrito/rabbit/carrito_validate"
-
 func main() {
 	/*port := os.Getenv("PORT")
 	if port == "" {
@@ -22,7 +20,5 @@ func main() {
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))*/
-	body := "hola fletoiles"
-	carritovalidate.SendMessage(body)
-	carritovalidate.ReceiveMessage()
+
 }

@@ -11,10 +11,8 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
-
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-usuario/src/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -1205,7 +1203,7 @@ func (ec *executionContext) fieldContext_User_correo(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _User_telefono(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_telefono(ctx context.Context, field graphql.CollectedField, obj *marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_telefono(ctx, field)
 	if err != nil {
 		return graphql.Null
