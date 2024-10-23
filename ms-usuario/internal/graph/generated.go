@@ -11,8 +11,10 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/graph/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -332,220 +334,100 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_login_argsUsername(ctx, rawArgs)
-	if err != nil {
-		return nil, err
+	var arg0 string
+	if tmp, ok := rawArgs["username"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
 	}
 	args["username"] = arg0
-	arg1, err := ec.field_Mutation_login_argsPassword(ctx, rawArgs)
-	if err != nil {
-		return nil, err
+	var arg1 string
+	if tmp, ok := rawArgs["password"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
 	}
 	args["password"] = arg1
 	return args, nil
-}
-func (ec *executionContext) field_Mutation_login_argsUsername(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["username"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
-	if tmp, ok := rawArgs["username"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_login_argsPassword(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["password"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
-	if tmp, ok := rawArgs["password"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_signUp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_signUp_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
+	var arg0 model.NewUserInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNNewUserInput2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐNewUserInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
 	}
 	args["input"] = arg0
 	return args, nil
-}
-func (ec *executionContext) field_Mutation_signUp_argsInput(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (model.NewUserInput, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["input"]
-	if !ok {
-		var zeroVal model.NewUserInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNNewUserInput2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐNewUserInput(ctx, tmp)
-	}
-
-	var zeroVal model.NewUserInput
-	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query___type_argsName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
+	var arg0 string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
 	}
 	args["name"] = arg0
 	return args, nil
-}
-func (ec *executionContext) field_Query___type_argsName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["name"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-	if tmp, ok := rawArgs["name"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Query_getUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getUser_argsUsername(ctx, rawArgs)
-	if err != nil {
-		return nil, err
+	var arg0 string
+	if tmp, ok := rawArgs["username"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
 	}
 	args["username"] = arg0
 	return args, nil
-}
-func (ec *executionContext) field_Query_getUser_argsUsername(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["username"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
-	if tmp, ok := rawArgs["username"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
 }
 
 func (ec *executionContext) field___Type_enumValues_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field___Type_enumValues_argsIncludeDeprecated(ctx, rawArgs)
-	if err != nil {
-		return nil, err
+	var arg0 bool
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
+		arg0, err = ec.unmarshalOBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
 	}
 	args["includeDeprecated"] = arg0
 	return args, nil
-}
-func (ec *executionContext) field___Type_enumValues_argsIncludeDeprecated(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (bool, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["includeDeprecated"]
-	if !ok {
-		var zeroVal bool
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		return ec.unmarshalOBoolean2bool(ctx, tmp)
-	}
-
-	var zeroVal bool
-	return zeroVal, nil
 }
 
 func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field___Type_fields_argsIncludeDeprecated(ctx, rawArgs)
-	if err != nil {
-		return nil, err
+	var arg0 bool
+	if tmp, ok := rawArgs["includeDeprecated"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
+		arg0, err = ec.unmarshalOBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
 	}
 	args["includeDeprecated"] = arg0
 	return args, nil
-}
-func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (bool, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["includeDeprecated"]
-	if !ok {
-		var zeroVal bool
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("includeDeprecated"))
-	if tmp, ok := rawArgs["includeDeprecated"]; ok {
-		return ec.unmarshalOBoolean2bool(ctx, tmp)
-	}
-
-	var zeroVal bool
-	return zeroVal, nil
 }
 
 // endregion ***************************** args.gotpl *****************************
@@ -628,7 +510,7 @@ func (ec *executionContext) _AuthPayload_user(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalNUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_AuthPayload_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -690,7 +572,7 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 	}
 	res := resTmp.(*model.AuthPayload)
 	fc.Result = res
-	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐAuthPayload(ctx, field.Selections, res)
+	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐAuthPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -751,7 +633,7 @@ func (ec *executionContext) _Mutation_signUp(ctx context.Context, field graphql.
 	}
 	res := resTmp.(*model.AuthPayload)
 	fc.Result = res
-	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐAuthPayload(ctx, field.Selections, res)
+	return ec.marshalNAuthPayload2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐAuthPayload(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_signUp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -809,7 +691,7 @@ func (ec *executionContext) _Query_getUser(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(*model.User)
 	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+	return ec.marshalOUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1203,7 +1085,7 @@ func (ec *executionContext) fieldContext_User_correo(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _User_telefono(ctx context.Context, field graphql.CollectedField, obj *marshalN__Type2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐType.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_telefono(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_telefono(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -3761,11 +3643,11 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAuthPayload2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐAuthPayload(ctx context.Context, sel ast.SelectionSet, v model.AuthPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNAuthPayload2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐAuthPayload(ctx context.Context, sel ast.SelectionSet, v model.AuthPayload) graphql.Marshaler {
 	return ec._AuthPayload(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNAuthPayload2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐAuthPayload(ctx context.Context, sel ast.SelectionSet, v *model.AuthPayload) graphql.Marshaler {
+func (ec *executionContext) marshalNAuthPayload2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐAuthPayload(ctx context.Context, sel ast.SelectionSet, v *model.AuthPayload) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -3820,7 +3702,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) unmarshalNNewUserInput2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐNewUserInput(ctx context.Context, v interface{}) (model.NewUserInput, error) {
+func (ec *executionContext) unmarshalNNewUserInput2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐNewUserInput(ctx context.Context, v interface{}) (model.NewUserInput, error) {
 	res, err := ec.unmarshalInputNewUserInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -3840,7 +3722,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4145,7 +4027,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑusuarioᚋsrcᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑusuarioᚋinternalᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
