@@ -1,15 +1,26 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"net/http"
+	"os"
 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/graph"
 	carritovalidate "github.com/proyectoIntegradorSoftware/ms-carrito/rabbit/carrito_validate"
+	"github.com/rs/cors"
 )
+
+const defaultPort = "8082"
 
 func main() {
 
-	esValido, err := carritovalidate.ValidarUsuarioRPC("66ec92300a5f7faf06c4adb6")
+	go func() {
+		carritovalidate.CrearCarritoRPC()
+	}()
+
+	/*esValido, err := carritovalidate.ValidarUsuarioRPC("66ec92300a5f7faf06c4adb6")
 	if err != nil {
 		log.Fatalf("Error llamando a ValidarUsuarioRPC: %v", err)
 	}
@@ -18,8 +29,8 @@ func main() {
 		fmt.Println("El usuario es válido")
 	} else {
 		fmt.Println("El usuario no es válido")
-	}
-	/*port := os.Getenv("PORT")
+	}*/
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
@@ -37,6 +48,6 @@ func main() {
 	http.Handle("/query", c.Handler(srv))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))*/
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 
 }

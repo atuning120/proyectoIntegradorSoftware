@@ -13,6 +13,7 @@ import (
 	crud "github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/CRUD"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/db"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/graph/model"
+	usuariovalidate "github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/rabbit/usuario_validate"
 	jwt "github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -87,13 +88,13 @@ func (r *mutationResolver) Login(ctx context.Context, username string, password 
 	return authPayload, nil
 }
 
-// SignUp is the resolver for the signUp field.
 func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput) (*model.AuthPayload, error) {
 	// Conecta a la base de datos
 	client, err := db.ConnectToMongoDB()
 	if err != nil {
 		return nil, fmt.Errorf("error de conexión a la base de datos: %v", err)
 	}
+	log.Println("Conectado a MongoDB")
 
 	// Define la colección de usuarios
 	collection := client.Database("Usuario").Collection("usuario")
@@ -115,8 +116,6 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 	filter := bson.M{"username": input.Username}
 	var existingUser bson.M
 	err = collection.FindOne(ctx, filter).Decode(&existingUser)
-
-	// Manejo del error de documento no encontrado correctamente
 	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, fmt.Errorf("error al verificar el usuario: %v", err)
 	}
@@ -145,12 +144,27 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 	}
 
 	// Inserta el nuevo usuario y maneja posibles errores de duplicado
-	_, err = collection.InsertOne(ctx, newUser)
+	insertResult, err := collection.InsertOne(ctx, newUser)
 	if err != nil {
 		if mongo.IsDuplicateKeyError(err) {
 			return nil, fmt.Errorf("el correo ya está en uso")
 		}
 		return nil, fmt.Errorf("error al crear el usuario: %v", err)
+	}
+
+	// Confirmar que el documento se insertó correctamente
+	userID := insertResult.InsertedID.(primitive.ObjectID).Hex()
+	log.Printf("Usuario insertado con éxito: %v", userID)
+
+	// Aquí llamamos a la función ValidarCarritoRPC para enviar el ID a RabbitMQ y crear el carrito
+	creacionExitosa, err := usuariovalidate.ValidarCarritoRPC(userID)
+	if err != nil {
+		// En caso de error en la comunicación con RabbitMQ, puedes optar por devolver un error
+		return nil, fmt.Errorf("error al crear el carrito para el usuario: %v", err)
+	}
+
+	if !creacionExitosa {
+		return nil, fmt.Errorf("no se pudo crear el carrito para el usuario")
 	}
 
 	// Generar un token JWT
@@ -169,7 +183,7 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 	return &model.AuthPayload{
 		Token: tokenString,
 		User: &model.User{
-			ID:       primitive.NewObjectID().Hex(),
+			ID:       userID,
 			Username: input.Username,
 			Nombre:   input.Nombre,
 			Apellido: input.Apellido,
