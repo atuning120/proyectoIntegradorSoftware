@@ -20,16 +20,6 @@ func main() {
 		carritovalidate.CrearCarritoRPC()
 	}()
 
-	/*esValido, err := carritovalidate.ValidarUsuarioRPC("66ec92300a5f7faf06c4adb6")
-	if err != nil {
-		log.Fatalf("Error llamando a ValidarUsuarioRPC: %v", err)
-	}
-
-	if esValido {
-		fmt.Println("El usuario es válido")
-	} else {
-		fmt.Println("El usuario no es válido")
-	}*/
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
