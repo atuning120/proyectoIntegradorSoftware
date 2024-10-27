@@ -5,25 +5,29 @@ import '../animations.css';
 import {Link} from 'react-router-dom'
 import BackButton from '../components/BackButton';
 import { useNavigate } from 'react-router-dom'; // Hook para la navegación
+import { useMutation, gql } from '@apollo/client';
 
+const LOGIN = gql`
+  mutation Login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      token
+      user {
+        id
+        nombre
+        apellido
+        username
+        correo
+      }
+    }
+  }
+`;
 
-//opcional, pero convierte las password en *'s (solo en alert)
-const maskText = (text) => {
-    return '*'.repeat(text.length);
-};
 //Para acceder a los datos del usuario desde cualquier componentes del front
 //const token = localStorage.getItem('token');
 //const user = JSON.parse(localStorage.getItem('user'));
 //console.log(user);
 
-const fetchWithTimeout = (url, options, timeout = 5000) => {
-    return Promise.race([
-        fetch(url, options),
-        new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Request timed out(no esta llegando al backend o no esta regresando)')), timeout)
-        )
-    ]);
-};
+
 const isAuthenticated = () => {
 	const token = localStorage.getItem('token');
   if(token){
@@ -52,30 +56,23 @@ const Login = () => {
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
+    const [login] = useMutation(LOGIN);
     // const [showPassword, setShowPassword] = useState(false);
 
-    // const [isLoginHovered, setIsLoginHovered] = useState(false);
-    // const [isSignUpHovered, setIsSignUpHovered] = useState(false);
-    // const [isQuestionInHovered, setIsQuestionHovered] = useState(false);
-
-
-    // const [loginButtonColor, setLoginButtonColor] = useState('#00A36C');
-    // const [signUpButtonColor, setSignUpButtonColor] = useState('#00A36C');
     
     const [isSignUpClicked,setIsSignUpClicked] = useState(false);
     const [isLoginClicked,setIsLoginClicked] = useState(false);
 
-    const [error, setError] = useState('');
+    //const [error, setError] = useState('');
     const [hasError, setHasError] = useState(false);
-
     const [hasRespOK, setHasRespOK] = useState(false);
-
     const [isLoading,setIsLoading] = useState(false);
 
-  // URL de tu backend (asegúrate de cambiarlo si es necesario)
-  const backendUrl = 'http://localhost:8080/query';
+  
 
   const handleLoginClick = async (evento) => {
+    
+
     evento.preventDefault();
     setIsLoginClicked(true);
     setTimeout(() => {
@@ -93,81 +90,35 @@ const Login = () => {
 
     if (newErrors.length > 0) {
       setErrors(newErrors);
-      setHasError(true);
-      setTimeout(() =>{
-        setErrors([]);
-      }, 750);
+      activarErrores(setHasError, setErrors);
       return;
-    } else {
-      setHasError(false);
-      try {
-        setIsLoading(true);
-        // Enviar la solicitud al servidor GraphQL
-        const response = await fetch(backendUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            query: `
-              mutation Login($username: String!, $password: String!) {
-                login(username: $username, password: $password) {
-                  token
-                  user {
-                    id
-                    nombre
-                    apellido
-                    username
-                    correo
-                  }
-                }
-              }
-            `,
-            variables: {
-              username: user,
-              password: password,
-            },
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          if (data.errors) {
-            setIsLoading(false);
-            console.log('Login failed:', data.errors[0].message);
-            setError('Login failed');
-            newErrors.push('Login failed, credenciales incorrectas');
-            setErrors(newErrors);
-            setTimeout(() =>{
-              setErrors([]);
-            }, 750);
-          } else {
-            console.log('Login successful:', data.data.login);
-            setHasRespOK(true);
-            // Guarda el token en el localStorage
-            localStorage.setItem('token', data.data.login.token);
-
-            // Si necesitas otros datos del usuario, también puedes guardarlos
-             localStorage.setItem('user', JSON.stringify(data.data.login.user));
-            setErrors([]); // limpia todos los errores
-
-            // Redirigir a la página de inicio
-            setTimeout(() => {
-              window.location.href = '/';
-            }, 350);
-          }
-        } else {
-          setIsLoading(false);
-          console.log('Login failed:', response.statusText);
-          setError('Login failed');
-          setHasRespOK(false);
-        }
-      } catch (error) {
-        setIsLoading(false);
-        console.error('Error during login:', error);
-        setError('An error occurred');
-      }
     }
+
+    try {
+      const request = await login({ variables: { username: user, password } });
+      if (request.errors) {
+        newErrors.push('Login failed, credenciales incorrectas');
+        console.log("error: credencial invalida");
+        activarErrores(setHasError, setErrors);
+        
+      } else {
+        setErrors([]);
+        setHasRespOK(true);
+        
+        localStorage.setItem('token', request.data.login.token);
+        localStorage.setItem('user', JSON.stringify(request.data.login.user));
+
+        //si llega hasta aca, no hay errores
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 350);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setErrors(['An error occurred']);
+      activarErrores(setHasError, setErrors);
+    }
+  
 
   };
     
@@ -251,29 +202,22 @@ const Login = () => {
           </div>
         
         </div>
-        {/* de momento, no se muestra el listado de errores
-        {errors.length > 0 && (
-         <ul className={`error-list text-black text-2xl bg-gradient-to-t from-red-600 to-transparent p-4 rounded-xl`}style={{maxHeight:'600px',overflowY:'auto'}}>
-             {errors.map((error, index) => (
-                 <li key={index} className='error-item'>{error}</li>
 
-             ))}
-         </ul>
-         )}
-         */}
         <div className='hidden relative lg:flex h-full items-center justify-center flex-1'>
         <div className={`w-60 h-60 rounded-full transition duration-100 ease-in-out ${isLoading? 'animate-pulse-spin': 'animate-spin'} ${getGradientClass(errors,hasRespOK)}`}> </div>
         <div className='w-full h-1/2 absolute bottom-0 bg-white/10 backdrop-blur-lg'></div>
 
-          {
-            /*
-            <div className={`w-60 h-60 rounded-full transition duration-300 ease-in-out ${isLoading? 'animate-bounce': 'animate-spin'} ${getGradientClass(errors,hasRespOK)}`}> </div>
-            <div className={`w-60 h-60 rounded-full transition duration-300 ease-in-out ${isLoading? 'animate-spin': 'animate-none'} ${getGradientClass(errors,hasRespOK)}`}> </div>
-            */
-          }
+
         </div>
       </div>
     );
 }
 
 export default Login;
+
+function activarErrores(setHasError, setErrors) {
+  setHasError(true);
+  setTimeout(() => {
+    setErrors([]);
+  }, 750);
+}
