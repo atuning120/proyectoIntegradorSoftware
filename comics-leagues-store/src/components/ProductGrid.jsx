@@ -1,5 +1,6 @@
 import React from 'react';
 import { gql, useQuery } from '@apollo/client';
+import {CircularProgress} from "@nextui-org/react";
 
 // Definir la query GraphQL
 const TOP_CURSOS = gql`
@@ -19,7 +20,7 @@ const ProductGrid = () => {
   const { loading, error, data } = useQuery(TOP_CURSOS);
 
   // Mostrar mensaje mientras los datos se cargan
-  if (loading) return <p>Cargando cursos...</p>;
+  if (loading) return <CircularProgress aria-label="Loading..." />
 
   // Manejar errores y mostrar un mensaje en la consola
   if (error) {

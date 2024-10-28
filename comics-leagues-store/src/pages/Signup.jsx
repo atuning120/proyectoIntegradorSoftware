@@ -192,119 +192,119 @@ const Signup = () => {
         <div className='flex h-screen -translate-y-3'>
             <div className='flex-1 w-1/2 flex justify-center rounded-md border-slate-200 border-2'>
                 <div className='bg-white p-6 rounded-xl h-full'>
-                    <h1 className='font-montserrat text-5xl bg-gradient-to-tr from-cyan-300 to-cyan-800 rounded-sm bg-clip-text text-transparent font-extrabold'>
-                    Create your account
+                    <h1 className='-translate-y-2 font-montserrat text-5xl bg-gradient-to-tr from-cyan-300 to-cyan-800 rounded-sm bg-clip-text text-transparent font-extrabold'>
+                    Únete ahora
                     </h1>
                     <p className='font-montserrat text-2xl text-gray-400 flex items-center justify-center pr-40'>
                     <br></br>
                     </p>
-            <form className=''>
+            <form className='h-full -translate-y-3'>
                     <div className='name'>
-                        <label htmlFor='name' className='text-black  text-2xl'>Name</label>
+                        <label htmlFor='name' className='text-black  text-2xl'>Nombre</label>
                         <input 
-                            placeholder='Enter your name here...'
+                            placeholder='Nombre aquí...'
                             type='text'
                             id='name'
                             value={name}
                             onChange={(evento) =>setName(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'71px'}}
-                            className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
+                            style={{ width:'300px',marginLeft:'48px'}}
+                            className='w-full text-2xl rounded-md py-1 hover:bg-gray-200' />
 
-                            {errorState[0] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, name can't be blank"}</p>} {/* Error Message */}
+                            {errorState[0] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, nombre no puede estar en blanco"}</p>} {/* Error Message */}
                     </div>
                     <div className='lastname'>
-                        <label htmlFor='lastname' className='text-black  text-2xl'>Last Name</label>
+                        <label htmlFor='lastname' className='text-black  text-2xl'>Apellido</label>
                         <input 
-                            placeholder='Enter last name here...'
+                            placeholder='Apellido aquí...'
                             type='text'
                             id='lastname'
                             value={lastname}
                             onChange={(evento) =>setLastname(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'15px'}}
+                            style={{ width:'300px',marginLeft:'50px'}}
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
 
-                            {errorState[1] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, last name can't be blank"}</p>} {/* Error Message */}
+                            {errorState[1] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, apellido no puede estar en blanco"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='age'>
-                        <label htmlFor='age' className='text-black text-2xl mr-1'>Age</label>
+                        <label htmlFor='age' className='text-black text-2xl mr-1'>Edad</label>
                         <input
-                            placeholder='Enter your age here...'
+                            placeholder='Edad aquí...'
                             type='number'
                             id='age'
                             value={userAge}
                             onChange={(evento) =>setUserAge(evento.target.value)}
                             min={2}
                             max={120}
-                            style={{ width:'300px',marginLeft:'93px'}}
+                            style={{ width:'300px',marginLeft:'80px'}}
                             
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
                             
-                            {errorState[2] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, age out of range(2~120) or missing"}</p>} {/* Error Message */}
+                            {errorState[2] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, edad fuera de rango"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='email'>
-                        <label htmlFor='user' className='text-black  text-2xl'>Email</label>
+                        <label htmlFor='user' className='text-black  text-2xl'>Correo</label>
                         <input 
-                            placeholder='Enter your email here...'
+                            placeholder='Correo aquí...'
                             type='email'
                             id='email'
                             value={email}
                             onChange={(evento) =>setEmail(evento.target.value)}
                             maxLength={20}
-                            style={{ width:'300px',marginLeft:'76.5px'}}
+                            style={{ width:'300px',marginLeft:'66.5px'}}
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
-                            {errorState[3] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, email can't be blank or is invalid"}</p>} {/* Error Message */}
+                            {errorState[3] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, correo invalido o inexistente"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='usuario'>
-                        <label htmlFor='user' className='text-black text-2xl'>User Name</label>
+                        <label htmlFor='user' className='text-black text-2xl'>Alias</label>
                         <input 
-                            placeholder='Enter user name here...'
+                            placeholder='Alias aquí...'
                             type='text'
                             id='usuario'
                             value={user}
                             onChange={(evento) =>setUser(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'10px'}}
+                            style={{ width:'300px',marginLeft:'90px'}}
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
-                            {errorState[4] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, username can't be blank"}</p>} {/* Error Message */}
+                            {errorState[4] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, usuario no puede estar en blanco"}</p>} {/* Error Message */}
                     </div>
                     
                     <div className='password'>
-                        <label htmlFor='password' className='text-black text-2xl'>Password</label>
+                        <label htmlFor='password' className='text-black text-2xl'>Clave</label>
                         <input
-                            placeholder="Enter password here..."
+                            placeholder="Contraseña aquí..."
                             type="password"
                             id="password"
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
-                            style={{ width:'300px',marginLeft:'30px'}}
+                            style={{ width:'300px',marginLeft:'80px'}}
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200'
                             maxLength={16} />
-                            {errorState[5] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, pwd can't be blank or is too short"}</p>} {/* Error Message */}
+                            {errorState[5] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, contraseña no cumple los requisitos"}</p>} {/* Error Message */}
                     </div>
 
                     <div className='phone'>
-                        <label htmlFor='phone' className='text-black text-2xl'>Phone</label>
+                        <label htmlFor='phone' className='text-black text-2xl'>Celular</label>
                         <input 
-                            placeholder='Enter phone number...'
+                            placeholder='Numero de celular aquí...'
                             type='text'
                             id='phone'
                             value={phone}
                             onChange={(evento) =>setPhone(evento.target.value)}
                             maxLength={16}
-                            style={{ width:'300px',marginLeft:'67px'}}
+                            style={{ width:'300px',marginLeft:'57px'}}
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200' />
-                            {errorState[6] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, phone can't be blank"}</p>} {/* Error Message */}
+                            {errorState[6] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, numero de celular inexistente"}</p>} {/* Error Message */}
                     </div>
                     
-                    <div className='mt-6'>
+                    <div className='mt-1'>
                         <div className='relative'>
-                            <p className='text-black text-2xl'>Choose your role:</p>
-                            <h3 className='text-black text-2xl mb-4 ml-52 absolute top-0'>{isTeacher ? 'You are a teacher' : 'You are a student'}</h3>
+                            <p className='text-black text-2xl'>Escoge tu rol:</p>
+                            <h3 className='text-black text-2xl mb-4 ml-52 absolute top-0'>{isTeacher ? 'Eres un profesor' : 'Eres un estudiante'}</h3>
                         </div>
                     <div className='ml-52'>
                         <input
@@ -336,13 +336,13 @@ const Signup = () => {
                     {/*boton de sign-up*/}
                         <button     
                         type='submit'
-                        className={`text-white py-3 px-6 mt-7 text-3xl rounded-3xl ml-6 mb-4 transform hover:scale-105 active:scale-95  bg-gray-900 hover:bg-gray-950 ${isSignUpClicked ? 'button-clicked' : ''}`}
+                        className={`text-white py-3 px-6 text-3xl rounded-3xl ml-6 mb-2 transform hover:scale-105 active:scale-95  bg-gray-900 hover:bg-gray-950 ${isSignUpClicked ? 'button-clicked' : ''}`}
                         onMouseEnter={() => setIsSignUpHovered(true)}
                         onMouseLeave={() => setIsSignUpHovered(false)}
                         onClick={handleSignUpClick}
                         
                     >
-                    Create Account
+                    Unirse a C.L.S.
                     </button>
                 </div>
 

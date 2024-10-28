@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@apollo/client": "^3.11.8",
-    "go": "^3.0.1",
-    "graphql": "^16.9.0",
-    "yarn": "^1.22.22"
-  }
-}

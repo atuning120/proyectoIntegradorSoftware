@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Hook para la navegación
 import {Button} from "@nextui-org/react";
+import Sidebar from "../components/shared/Sidebar"
 
 //Cerrar sesion
 const logout = () => {
@@ -21,10 +22,12 @@ const UserProfile = () => {
     navigate('/'); // Redirige a la página de inicio
   };
 
+  /*
   return (
     <Button color="primary" variant="shadow" onClick={handleLogout}>Cerrar Sesion</Button>
     
   );
+  */
 };
 
 export default UserProfile;

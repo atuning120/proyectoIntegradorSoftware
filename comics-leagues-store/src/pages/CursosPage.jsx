@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import {Image} from "@nextui-org/react";
+import {CircularProgress} from "@nextui-org/react";
 
 const GET_CURSOS = gql`
   query GetCursos {
@@ -39,7 +40,7 @@ const CursosPage = () => {
   };
 
   // Si los datos están cargando
-  if (loading) return <p>Cargando cursos...</p>;
+  if (loading) return <CircularProgress aria-label="Loading..."/>;
 
   // Si hay un error al obtener los datos
   // if (error) return <p>Error al cargar los cursos: {error.message}</p>;

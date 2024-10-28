@@ -4,5 +4,7 @@ go install github.com/air-verse/air@latest
 # compilacion de los microservicios (el archivo air.toml ya estan configurados)
 air
 
-# Levantamineto de el contenedor con la imagen de docker
-docker-compose up -ds
+
+# Levantamineto de el contenedor con la imagen de rabbitqm
+docker-compose up -d
+
