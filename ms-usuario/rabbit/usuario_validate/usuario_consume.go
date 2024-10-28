@@ -2,8 +2,8 @@ package usuariovalidate
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/db"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/repository"
@@ -12,13 +12,17 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func ValidarUsuarioRespuesta() {
+func ValidarUsuarioRespuesta() error {
 	conn, err := rabbit.ConnectToRabbit()
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return fmt.Errorf("failed to connect to RabbitMQ: %w", err)
+	}
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return fmt.Errorf("failed to open a channel: %w", err)
+	}
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
@@ -29,14 +33,18 @@ func ValidarUsuarioRespuesta() {
 		false,         // no-wait
 		nil,           // arguments
 	)
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return fmt.Errorf("failed to declare a queue: %w", err)
+	}
 
 	err = ch.Qos(
 		1,     // prefetch count
 		0,     // prefetch size
 		false, // global
 	)
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return fmt.Errorf("failed to set QoS: %w", err)
+	}
 
 	msgs, err := ch.Consume(
 		q.Name, // queue
@@ -47,30 +55,32 @@ func ValidarUsuarioRespuesta() {
 		false,  // no-wait
 		nil,    // args
 	)
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
-
-	var forever chan struct{}
-
-	// Busqueda
-
-	client, err := db.ConnectToMongoDB()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to register a consumer: %w", err)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	defer client.Disconnect(ctx)
+	// Conexión a MongoDB
+	client, err := db.ConnectToMongoDB()
+	if err != nil {
+		return fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+	defer client.Disconnect(context.Background())
 
 	db := client.Database("Usuario")
-
 	usuariorepo := repository.NewUsuarioRepository(db)
 	usuarioserv := service.NewUsuarioService(usuariorepo)
 
 	go func() {
 		for d := range msgs {
+			log.Printf("Mensaje recibido en el consumidor: %s", d.Body) // En el consumidor
+
 			idUsuario := string(d.Body)
+
+			// Validar si el idUsuario tiene el formato adecuado de ObjectID
+			if len(idUsuario) != 24 {
+				log.Printf("Error: el ID proporcionado no tiene un formato válido: %s", idUsuario)
+				continue
+			}
 
 			log.Printf(" [.] Validando usuario con ID: %s", idUsuario)
 			existe, err := usuarioserv.ValidarUsuario(context.Background(), idUsuario)
@@ -94,7 +104,10 @@ func ValidarUsuarioRespuesta() {
 					CorrelationId: d.CorrelationId,
 					Body:          []byte(respuesta),
 				})
-			rabbit.FailedailOnError(err, "Failed to publish a message")
+			if err != nil {
+				log.Printf("Failed to publish a message: %s", err)
+				continue
+			}
 
 			// Confirmar que el mensaje ha sido procesado
 			d.Ack(false)
@@ -102,5 +115,5 @@ func ValidarUsuarioRespuesta() {
 	}()
 
 	log.Printf(" [*] Esperando solicitudes de validación de usuario")
-	<-forever
+	select {} // Esta línea bloquea la función indefinidamente para mantener el consumidor activo.
 }

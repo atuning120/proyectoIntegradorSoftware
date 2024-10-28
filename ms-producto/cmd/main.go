@@ -7,7 +7,8 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/atuning120/proyectoIntegradorSoftware/comics-leagues-store/servicio-producto/src/internal/graph"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/consumer"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/graph"
 
 	"github.com/rs/cors"
 )
@@ -15,6 +16,9 @@ import (
 const defaultPort = "8081"
 
 func main() {
+
+	// Consumidores escuchando
+	consumer.ProductoConsumidores()
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -7,25 +7,87 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
 
+	connection "github.com/proyectoIntegradorSoftware/ms-carrito/internal/database"
 	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/graph/model"
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/repository"
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/services"
+	carritovalidate "github.com/proyectoIntegradorSoftware/ms-carrito/rabbit/carrito_validate"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// AgregarProducto is the resolver for the AgregarProducto field.
+func (r *mutationResolver) AgregarProducto(ctx context.Context, input model.AgregarProductoInput) (*model.Carrito, error) {
+	usuarioValid, err := carritovalidate.ValidarUsuarioRPC(input.IDUsuario)
+	if err != nil {
+		return nil, fmt.Errorf("el error es %v", err)
+	}
+
+	if !usuarioValid {
+		log.Fatalf("El usuario no existe %c", err)
+		return nil, err
+	}
+
+	productoValid, err := carritovalidate.ValidarProductoRPC(input.IDProducto)
+	if err != nil {
+		return nil, fmt.Errorf("el error es %v", err)
+	}
+
+	if !productoValid {
+		log.Fatalf("El producto no existe %c", err)
+		return nil, err
+	}
+
+	client, err := connection.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			log.Fatalf("Error desconectando MongoDB: %v", err)
+		}
+	}()
+
+	db := client.Database("Carrito")
+	carritorepo := repository.NewHisotialRepositoryImpl(db)
+	carritoService := services.NewServicioHistorialImpl(carritorepo)
+
+	isAdded, err := carritoService.AnadirProduct(ctx, input.IDUsuario, input.IDProducto)
+	if err != nil {
+		return nil, fmt.Errorf("error al agregar producto al carrito: %v", err)
+	}
+
+	if !isAdded {
+		return nil, fmt.Errorf("el producto ya está en el carrito")
+	}
+
+	carritoActualizado, err := carritorepo.FindById(ctx, input.IDUsuario)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el carrito actualizado: %v", err)
+	}
+
+	return &model.Carrito{
+		ID:          carritoActualizado.ID.Hex(),
+		IDUsuario:   carritoActualizado.IDUsuario.Hex(),
+		IDProductos: convertObjectIDsToStrings(carritoActualizado.IDProductos),
+	}, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// EliminarProducto is the resolver for the EliminarProducto field.
+func (r *mutationResolver) EliminarProducto(ctx context.Context, input model.EliminarProductoInput) (*model.Carrito, error) {
+	panic(fmt.Errorf("not implemented: EliminarProducto - EliminarProducto"))
 }
 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
-
 type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
+
+func convertObjectIDsToStrings(ids []primitive.ObjectID) []string {
+	var stringIDs []string
+	for _, id := range ids {
+		stringIDs = append(stringIDs, id.Hex())
+	}
+	return stringIDs
+}

@@ -10,7 +10,8 @@ import (
 )
 
 type ServicioHistorial interface {
-	CreacionCarrito(ctx context.Context, idUsuario string) (bool, error)
+	CreacionCarrito(ctx context.Context, idUsuario string, idProducto string) (bool, error)
+	AnadirProduct(ctx context.Context, idProducto string) (bool, error)
 }
 
 type ServicioHistorialImpl struct {
@@ -23,15 +24,48 @@ func NewServicioHistorialImpl(repository repository.HistorialRepository) *Servic
 	}
 }
 
+func (s *ServicioHistorialImpl) AnadirProduct(ctx context.Context, idUsuario string, idProducto string) (bool, error) {
+
+	objectIdProducto, err := primitive.ObjectIDFromHex(idProducto)
+	if err != nil {
+		fmt.Printf("Error al convertir idProducto a ObjectID: %v\n", err)
+		return false, fmt.Errorf("error al convertir idProducto a ObjectID: %v", err)
+	}
+
+	carrito, err := s.Repository.FindById(ctx, idUsuario)
+	if err != nil {
+		fmt.Printf("Error al buscar el carrito correspondiente al usuario: %v\n", err)
+		return false, fmt.Errorf("error al buscar el carrito correspondiente al usuario: %v", err)
+	}
+
+	for _, producto := range carrito.IDProductos {
+		if producto == objectIdProducto {
+			fmt.Println("El producto ya existe dentro del carrito")
+			return true, nil
+		}
+	}
+
+	carrito.IDProductos = append(carrito.IDProductos, objectIdProducto)
+
+	// Insertar el producto en MongoDB
+	isValid, err := s.Repository.InsertProduct(ctx, carrito)
+	if err != nil {
+		fmt.Printf("Error al actualizar el carrito en MongoDB: %v\n", err)
+		return isValid, fmt.Errorf("error al actualizar el carrito en MongoDB: %v", err)
+	}
+
+	return isValid, nil
+}
+
 func (s *ServicioHistorialImpl) CreacionCarrito(ctx context.Context, idUsuario string) (confirmacion bool, err error) {
 	objectID, err := primitive.ObjectIDFromHex(idUsuario)
 	if err != nil {
 		return false, fmt.Errorf("error al convertir idUsuario a ObjectID: %v", err)
 	}
 
-	historial := models.Historial{
-		IdUsuario:   objectID,
-		IdProductos: []primitive.ObjectID{},
+	historial := models.Carrito{
+		IDUsuario:   objectID,
+		IDProductos: []primitive.ObjectID{},
 	}
 
 	_, err = s.Repository.InsertOne(ctx, historial)

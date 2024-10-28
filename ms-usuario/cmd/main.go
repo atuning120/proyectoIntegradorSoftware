@@ -7,17 +7,17 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/consumer"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/graph"
-	usuariovalidate "github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/rabbit/usuario_validate"
 	"github.com/rs/cors"
 )
 
 const defaultPort = "8080"
 
 func main() {
-	go func() {
-		usuariovalidate.ValidarUsuarioRespuesta()
-	}()
+
+	// Consumidores escuchando
+	consumer.ConsumerInit()
 
 	port := os.Getenv("PORT")
 
