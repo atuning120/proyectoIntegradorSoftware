@@ -11,7 +11,8 @@ import (
 
 type ServicioHistorial interface {
 	CreacionCarrito(ctx context.Context, idUsuario string, idProducto string) (bool, error)
-	AnadirProduct(ctx context.Context, idProducto string) (bool, error)
+	AnadirProduct(ctx context.Context, idUsuario string, idProducto string) (bool, error)
+	EliminarProducto(ctx context.Context, idUsuario string, idProducto string) (bool, error)
 }
 
 type ServicioHistorialImpl struct {
@@ -22,6 +23,23 @@ func NewServicioHistorialImpl(repository repository.HistorialRepository) *Servic
 	return &ServicioHistorialImpl{
 		Repository: repository,
 	}
+}
+
+func (s *ServicioHistorialImpl) EliminarProducto(ctx context.Context, idUsuario string, idProducto string) (bool, error) {
+	carrito, err := s.Repository.FindById(ctx, idUsuario)
+	if err != nil {
+		fmt.Printf("Error al buscar el carrito correspondiente al usuario: %v\n", err)
+		return false, fmt.Errorf("error al buscar el carrito correspondiente al usuario: %v", err)
+	}
+
+	isValid, err := s.Repository.DeleteOneProduct(ctx, idProducto, carrito)
+	if err != nil {
+		fmt.Printf("Error al actualizar el carrito en MongoDB: %v\n", err)
+		return isValid, fmt.Errorf("error al actualizar el carrito en MongoDB: %v", err)
+	}
+
+	return isValid, nil
+
 }
 
 func (s *ServicioHistorialImpl) AnadirProduct(ctx context.Context, idUsuario string, idProducto string) (bool, error) {

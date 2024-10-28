@@ -2,7 +2,6 @@
 
 package model
 
-
 type AgregarProductoInput struct {
 	IDUsuario  string `json:"IDUsuario"`
 	IDProducto string `json:"IDProducto"`
@@ -15,8 +14,8 @@ type Carrito struct {
 }
 
 type EliminarProductoInput struct {
-	IDCarrito  string `json:"idCarrito"`
-	IDProducto string `json:"idProducto"`
+	IDUsuario  string `json:"IDUsuario"`
+	IDProducto string `json:"IDProducto"`
 }
 
 type Mutation struct {

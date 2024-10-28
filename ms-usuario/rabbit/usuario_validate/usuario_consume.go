@@ -72,7 +72,6 @@ func ValidarUsuarioRespuesta() error {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("Mensaje recibido en el consumidor: %s", d.Body) // En el consumidor
 
 			idUsuario := string(d.Body)
 

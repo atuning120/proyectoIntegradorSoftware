@@ -40,8 +40,6 @@ func ValidarUsuarioRPC(idUsuario string) (esValido bool, err error) {
 
 	corrId := randomString(32)
 
-	log.Printf("Enviando mensaje al consumidor con IDUsuario: %s", idUsuario)
-
 	err = ch.Publish(
 		"",            // exchange
 		"rpc_usuario", // routing key
