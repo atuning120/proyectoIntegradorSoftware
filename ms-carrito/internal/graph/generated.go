@@ -40,6 +40,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
+	Query() QueryResolver
 }
 
 type DirectiveRoot struct {
@@ -58,12 +59,18 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		ObtenerCarrito  func(childComplexity int, id string) int
+		ObtenerCarritos func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
 	AgregarProducto(ctx context.Context, input model.AgregarProductoInput) (*model.Carrito, error)
 	EliminarProducto(ctx context.Context, input model.EliminarProductoInput) (*model.Carrito, error)
+}
+type QueryResolver interface {
+	ObtenerCarritos(ctx context.Context) ([]*model.Carrito, error)
+	ObtenerCarrito(ctx context.Context, id string) (*model.Carrito, error)
 }
 
 type executableSchema struct {
@@ -129,6 +136,25 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.EliminarProducto(childComplexity, args["input"].(model.EliminarProductoInput)), true
+
+	case "Query.ObtenerCarrito":
+		if e.complexity.Query.ObtenerCarrito == nil {
+			break
+		}
+
+		args, err := ec.field_Query_ObtenerCarrito_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.ObtenerCarrito(childComplexity, args["id"].(string)), true
+
+	case "Query.ObtenerCarritos":
+		if e.complexity.Query.ObtenerCarritos == nil {
+			break
+		}
+
+		return e.complexity.Query.ObtenerCarritos(childComplexity), true
 
 	}
 	return 0, false
@@ -317,6 +343,38 @@ func (ec *executionContext) field_Mutation_EliminarProducto_argsInput(
 	}
 
 	var zeroVal model.EliminarProductoInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_ObtenerCarrito_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_ObtenerCarrito_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_ObtenerCarrito_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
 	return zeroVal, nil
 }
 
@@ -676,6 +734,118 @@ func (ec *executionContext) fieldContext_Mutation_EliminarProducto(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_EliminarProducto_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_ObtenerCarritos(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_ObtenerCarritos(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ObtenerCarritos(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Carrito)
+	fc.Result = res
+	return ec.marshalNCarrito2ᚕᚖgithubᚗcomᚋproyectoIntegradorSoftwareᚋmsᚑcarritoᚋinternalᚋgraphᚋmodelᚐCarritoᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_ObtenerCarritos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Carrito_id(ctx, field)
+			case "idUsuario":
+				return ec.fieldContext_Carrito_idUsuario(ctx, field)
+			case "idProductos":
+				return ec.fieldContext_Carrito_idProductos(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Carrito", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_ObtenerCarrito(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_ObtenerCarrito(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().ObtenerCarrito(rctx, fc.Args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Carrito)
+	fc.Result = res
+	return ec.marshalOCarrito2ᚖgithubᚗcomᚋproyectoIntegradorSoftwareᚋmsᚑcarritoᚋinternalᚋgraphᚋmodelᚐCarrito(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_ObtenerCarrito(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Carrito_id(ctx, field)
+			case "idUsuario":
+				return ec.fieldContext_Carrito_idUsuario(ctx, field)
+			case "idProductos":
+				return ec.fieldContext_Carrito_idProductos(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Carrito", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_ObtenerCarrito_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2625,22 +2795,22 @@ func (ec *executionContext) unmarshalInputEliminarProductoInput(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"idCarrito", "idProducto"}
+	fieldsInOrder := [...]string{"IDUsuario", "IDProducto"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "idCarrito":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idCarrito"))
+		case "IDUsuario":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("IDUsuario"))
 			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.IDCarrito = data
-		case "idProducto":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idProducto"))
+			it.IDUsuario = data
+		case "IDProducto":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("IDProducto"))
 			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -2784,6 +2954,47 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "ObtenerCarritos":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_ObtenerCarritos(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "ObtenerCarrito":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_ObtenerCarrito(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -3165,6 +3376,50 @@ func (ec *executionContext) marshalNCarrito2githubᚗcomᚋproyectoIntegradorSof
 	return ec._Carrito(ctx, sel, &v)
 }
 
+func (ec *executionContext) marshalNCarrito2ᚕᚖgithubᚗcomᚋproyectoIntegradorSoftwareᚋmsᚑcarritoᚋinternalᚋgraphᚋmodelᚐCarritoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Carrito) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCarrito2ᚖgithubᚗcomᚋproyectoIntegradorSoftwareᚋmsᚑcarritoᚋinternalᚋgraphᚋmodelᚐCarrito(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNCarrito2ᚖgithubᚗcomᚋproyectoIntegradorSoftwareᚋmsᚑcarritoᚋinternalᚋgraphᚋmodelᚐCarrito(ctx context.Context, sel ast.SelectionSet, v *model.Carrito) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -3519,6 +3774,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOCarrito2ᚖgithubᚗcomᚋproyectoIntegradorSoftwareᚋmsᚑcarritoᚋinternalᚋgraphᚋmodelᚐCarrito(ctx context.Context, sel ast.SelectionSet, v *model.Carrito) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Carrito(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

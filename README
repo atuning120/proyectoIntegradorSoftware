@@ -5,4 +5,4 @@ go install github.com/air-verse/air@latest
 air
 
 # Levantamineto de el contenedor con la imagen de docker
-docker-compose up -d
+docker-compose up -ds

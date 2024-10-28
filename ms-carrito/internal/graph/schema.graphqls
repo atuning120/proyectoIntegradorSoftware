@@ -10,9 +10,15 @@ input AgregarProductoInput {
 }
 
 input EliminarProductoInput {
-  idCarrito: ID!
-  idProducto: ID!
+  IDUsuario: ID!
+  IDProducto: ID!
 }
+
+type Query {
+  ObtenerCarritos: [Carrito!]!
+  ObtenerCarrito(id: ID!): Carrito 
+}
+
 
 type Mutation {
   AgregarProducto(input: AgregarProductoInput!): Carrito!
