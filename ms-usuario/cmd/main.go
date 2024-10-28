@@ -37,6 +37,7 @@ func main() {
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"*"},
+		Debug:            true, // Activa para ver detalles en la consola
 	})
 
 	// Configura las rutas para el Playground y las queries

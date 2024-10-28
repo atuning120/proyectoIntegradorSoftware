@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom'
 import BackButton from '../components/BackButton';
 import { useNavigate } from 'react-router-dom'; // Hook para la navegación
 import { useMutation, gql } from '@apollo/client';
+import {userClient} from '../apolloClient';
 
 const LOGIN = gql`
   mutation Login($username: String!, $password: String!) {
@@ -56,7 +57,7 @@ const Login = () => {
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
 
-    const [login] = useMutation(LOGIN);
+    const [login] = useMutation(LOGIN, {client: userClient});
     // const [showPassword, setShowPassword] = useState(false);
 
     
@@ -95,8 +96,10 @@ const Login = () => {
     }
 
     try {
+      console.log("pal q lee");
       const request = await login({ variables: { username: user, password } });
-      if (request.errors) {
+      console.log(request);
+      if (request.errors || !request.data) {
         newErrors.push('Login failed, credenciales incorrectas');
         console.log("error: credencial invalida");
         activarErrores(setHasError, setErrors);

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import {Image} from "@nextui-org/react";
 import {CircularProgress} from "@nextui-org/react";
+import {productClient} from '../apolloClient';
 
 const GET_CURSOS = gql`
   query GetCursos {
@@ -17,7 +18,7 @@ const GET_CURSOS = gql`
 `;
 
 const CursosPage = () => {
-  const { loading, error, data } = useQuery(GET_CURSOS);
+  const { loading, error, data } = useQuery(GET_CURSOS, {client: productClient});
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
