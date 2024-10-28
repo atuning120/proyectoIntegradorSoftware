@@ -7,8 +7,8 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/consumer"
 	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/graph"
-	carritovalidate "github.com/proyectoIntegradorSoftware/ms-carrito/rabbit/carrito_validate"
 	"github.com/rs/cors"
 )
 
@@ -16,9 +16,7 @@ const defaultPort = "8082"
 
 func main() {
 
-	go func() {
-		carritovalidate.CrearCarritoRPC()
-	}()
+	consumer.ConsumerInit()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -27,11 +25,11 @@ func main() {
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 
-	// Habilitar CORS para permitir solicitudes del frontend (localhost:3000)
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"*"}, // Permite todas las solicitudes
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
-		Debug:            true,
 	})
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))

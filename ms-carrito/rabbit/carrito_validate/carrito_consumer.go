@@ -2,8 +2,8 @@ package carritovalidate
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	connection "github.com/proyectoIntegradorSoftware/ms-carrito/internal/database"
 	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/repository"
@@ -12,64 +12,58 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func CrearCarritoRPC() {
-
+func CrearCarritoRPC() error {
 	conn, err := rabbit.ConnectToRabbit()
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return fmt.Errorf("failed to connect to RabbitMQ: %w", err)
+	}
 	defer conn.Close()
 
 	ch, err := conn.Channel()
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return fmt.Errorf("failed to open a channel: %w", err)
+	}
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"rpc_creacion_carrito", // name
-		false,                  // durable
-		false,                  // delete when unused
-		false,                  // exclusive
-		false,                  // no-wait
-		nil,                    // arguments
+		"rpc_creacion_carrito",
+		false, // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
 	)
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return fmt.Errorf("failed to declare a queue: %w", err)
+	}
 
-	err = ch.Qos(
-		1,     // prefetch count
-		0,     // prefetch size
-		false, // global
-	)
-	rabbit.FailedailOnError(err, "Failed to set QoS")
+	err = ch.Qos(1, 0, false)
+	if err != nil {
+		return fmt.Errorf("failed to set QoS: %w", err)
+	}
 
 	msgs, err := ch.Consume(
-		q.Name, // queue
-		"",     // consumer
-		false,  // auto-ack
-		false,  // exclusive
-		false,  // no-local
-		false,  // no-wait
-		nil,    // args
+		q.Name,
+		"",
+		false, // auto-ack
+		false, // exclusive
+		false, // no-local
+		false, // no-wait
+		nil,
 	)
-	rabbit.FailedailOnError(err, "Failed to connect to RabbitMQ")
-
-	var forever chan struct{}
+	if err != nil {
+		return fmt.Errorf("failed to register a consumer: %w", err)
+	}
 
 	client, err := connection.ConnectToMongoDB()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
 	defer func() {
 		if err := client.Disconnect(context.TODO()); err != nil {
 			log.Fatalf("Error desconectando MongoDB: %v", err)
 		}
 	}()
-
-	// Crear contexto con timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	// Verificar que la conexión a MongoDB es válida
-	if err := client.Ping(ctx, nil); err != nil {
-		log.Fatalf("No se pudo hacer ping a MongoDB: %v", err)
-	}
 
 	db := client.Database("Carrito")
 	carritorepo := repository.NewHisotialRepositoryImpl(db)
@@ -78,11 +72,12 @@ func CrearCarritoRPC() {
 	go func() {
 		for d := range msgs {
 			idUsuario := string(d.Body)
+			log.Printf(" [.] Procesando solicitud para ID de usuario: %s", idUsuario)
 
-			log.Printf(" [.] Validando usuario con ID: %s", idUsuario)
+			// Intentar crear el carrito
 			existe, err := carritoService.CreacionCarrito(context.Background(), idUsuario)
 			if err != nil {
-				log.Printf("Error validando usuario: %s", err)
+				log.Printf("Error en la creación del carrito: %s", err)
 				continue
 			}
 
@@ -91,23 +86,27 @@ func CrearCarritoRPC() {
 				respuesta = "true"
 			}
 
+			// Responder al productor con el resultado
 			err = ch.Publish(
-				"",        // exchange
-				d.ReplyTo, // routing key
-				false,     // mandatory
-				false,     // immediate
+				"",
+				d.ReplyTo,
+				false, // mandatory
+				false, // immediate
 				amqp.Publishing{
 					ContentType:   "text/plain",
 					CorrelationId: d.CorrelationId,
 					Body:          []byte(respuesta),
 				})
-			rabbit.FailedailOnError(err, "Failed to publish a message")
+			if err != nil {
+				log.Printf("Failed to publish a message: %s", err)
+				continue
+			}
 
 			// Confirmar que el mensaje ha sido procesado
 			d.Ack(false)
 		}
 	}()
 
-	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	log.Printf(" [*] Esperando solicitudes de creación de carrito")
+	select {} // Mantiene el consumidor activo.
 }
