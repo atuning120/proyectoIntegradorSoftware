@@ -3,7 +3,9 @@ import '../index.css';
 import '../animations.css';
 import Login from './Login';
 import BackButton from '../components/BackButton';
-
+import { useMutation, gql } from '@apollo/client';
+import { userClient } from '../apolloClient';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const isAuthenticated = () => {
 	const token = localStorage.getItem('token');
@@ -22,6 +24,21 @@ const fetchWithTimeout = (url, options, timeout = 5000) => {
 ]);
 };
 
+
+const SIGNUP_MUTATION = gql`
+mutation SignUp($input: NewUserInput!) {
+  signUp(input: $input) {
+    token
+    user {
+      id
+      nombre
+      apellido
+      username
+      correo
+    }
+  }
+}
+`;    
 
 const Signup = () => {
     const [errors, setErrors] = useState([]);
@@ -52,25 +69,16 @@ const Signup = () => {
 
     const [isNameOK,setIsNameOK] = useState(false);
 
+    const [signupGQL] = useMutation(SIGNUP_MUTATION, {client:userClient});
+    const [showPassword, setShowPassword] = useState(false);
+
+
     const handleRoleButtonClick = (e) => {
         setIsTeacher(!isTeacher);
     };
 
-    // Definir la mutacion de GraphQL como una cadena
-    const SIGNUP_MUTATION = `
-      mutation SignUp($input: NewUserInput!) {
-        signUp(input: $input) {
-          token
-          user {
-            id
-            nombre
-            apellido
-            username
-            correo
-          }
-        }
-      }
-    `;    
+    
+
 
     const handleSignUpClick = async (evento) => {
         evento.preventDefault(); //evita que se reinicie la pagina
@@ -137,47 +145,37 @@ const Signup = () => {
             try {
                 console.log("Enviando solicitud al backend para almacenar esta cuenta nueva");
 
-                // Ejecuta la solicitud de fetch con la mutacion
-                const response = await fetch('http://localhost:8080/query', { // Cambia esto a la URL correcta de tu backend GraphQL
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        query: SIGNUP_MUTATION, // La mutacion de GraphQL
-                        variables: {
-                            input: {
-                                nombre: name,
-                                apellido: lastname,
-                                edad: parseInt(userAge),
-                                correo: email,
-                                username: user,
-                                password: password,
-                                telefono: phone,
-                                rol: isTeacher ? 'profesor' : 'alumno', // Ajusta esto segun tu backend
-                            },
-                        },
-                    }),
-                });
+                const response = await signupGQL({
+                    variables: {
+                        input: {
+                            nombre: name,
+                            apellido: lastname,
+                            edad: parseInt(userAge),
+                            correo: email,
+                            username: user,
+                            password: password,
+                            telefono: phone,
+                            rol: isTeacher ? 'profesor' : 'alumno',
+                        }
+                    }});
                 
-                if(response.ok){
-                    const data = await response.json();
-                    console.log('Resultado del registro:', data);
-                    if (data.errors) {
-                        newErrors.push('Error en la creacion de la cuenta.');
-                        setErrors(newErrors);
-                        setIsAccountCreated(false);
-                    } else {
-                        console.log('Registro exitoso:', data.data.signUp);
-                        setErrors([]);
-                        setIsAccountCreated(true);
-                        console.log("token: ",data.data.signUp.token)
-                        localStorage.setItem('token', data.data.signUp.token);
-                        localStorage.setItem('user', JSON.stringify(data.data.signUp.user));
-                        
-                        // Redirigir a la página de inicio
-                        window.location.href = '/';
-                }}
+                if(response.errors || !response.data){
+                    newErrors.push('Error en la creacion de la cuenta.');
+                    setErrors(newErrors);
+                    setIsAccountCreated(false);
+                    return;
+                }
+                console.log('Registro exitoso:', response.data.signUp);
+                setErrors([]);
+                setIsAccountCreated(true);
+                console.log("token: ",response.data.signUp.token)
+                localStorage.setItem('token', response.data.signUp.token);
+                localStorage.setItem('user', JSON.stringify(response.data.signUp.user));
+                
+                // Redirigir a la página de inicio
+                setTimeout(() => {
+                    window.location.href = '/';
+                  }, 350);
             } catch (error) {
                 console.error('Error durante la creacion de la cuenta:', error);
                 newErrors.push('Error durante la creacion de la cuenta.');
@@ -187,6 +185,10 @@ const Signup = () => {
         }
     };
     
+
+    const toggleVisibility = () => {
+        setShowPassword((prev) => !prev);//este formato es mas apropiado para async
+      };
 
     return(
         <div className='flex h-screen -translate-y-3'>
@@ -277,7 +279,7 @@ const Signup = () => {
                         <label htmlFor='password' className='text-black text-2xl'>Clave</label>
                         <input
                             placeholder="Contraseña aquí..."
-                            type="password"
+                            type={showPassword? 'text' : 'password'}
                             id="password"
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
@@ -285,6 +287,14 @@ const Signup = () => {
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200'
                             maxLength={16} />
                             {errorState[5] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, contraseña no cumple los requisitos"}</p>} {/* Error Message */}
+
+                            <button
+                              onClick={toggleVisibility}
+                              type="button"
+                              className="text-2xl -translate-x-9 translate-y-1 focus:outline-none"
+                          >
+                              {showPassword ? <FaEye /> : <FaEyeSlash />}
+                          </button>
                     </div>
 
                     <div className='phone'>
@@ -317,7 +327,7 @@ const Signup = () => {
                             className='w-7 h-7 mr-2'
                             style={{ accentColor: '#e5e4e2' }}
                         />
-                        <label htmlFor='student' className='text-black text-2xl'>Student</label>
+                        <label htmlFor='student' className='text-black text-2xl'>Estudiante</label>
                         <br></br>
                         <input
                             type='radio'
@@ -329,7 +339,7 @@ const Signup = () => {
                             className='w-7 h-7 mr-2'
                             style={{ accentColor: '#e5e4e2' }}
                         />
-                        <label htmlFor='teacher' className='text-black text-2xl'>Teacher</label>
+                        <label htmlFor='teacher' className='text-black text-2xl'>Profesor</label>
                     </div>
 
                     <br></br>

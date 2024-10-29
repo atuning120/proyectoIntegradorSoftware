@@ -1,5 +1,5 @@
 import { useState , useEffect} from "react";
-
+import {CircularProgress} from "@nextui-org/react";
 
 
 const isAuthenticated = () =>{
@@ -15,22 +15,35 @@ const isAuthenticated = () =>{
 const Perfil = () =>{
     const [user,setUser] = useState('');
     const token = isAuthenticated();
+    const [loading,setLoading] = useState(true);
 
     useEffect(() => {
-        if (token) {
-            const storedUser = localStorage.getItem('user');
-            if (storedUser) {
-                setUser(JSON.parse(storedUser));
+        try {
+            if (token) {
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    setUser(JSON.parse(storedUser));
+                } else {
+                    console.error("No user data found in local storage.");
+                }
             } else {
-                console.error("No user data found in local storage.");
+                console.error("User is not authenticated.");
             }
-        } else {
-            console.error("User is not authenticated.");
+            
+        } catch (error) {
+            console.error("ERROR: "+error);
+        } finally {
+            setLoading(false);
         }
+
     }, [token]);
 
+    if(loading){
+        return <CircularProgress aria-label="Loading..."/>;
+    }
+
     if (!user) {
-        return <h1>ERROR</h1>;
+        return (<h1 className="flex justify-center text-3xl text-red-600">ERROR: Falta iniciar sesion</h1>);
     }
     return (
         <div className="mt-8 p-4 flex justify-center mr-16">

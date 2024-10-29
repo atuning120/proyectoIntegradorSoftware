@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from "react";
 import { BsArrowLeftSquareFill, BsSearch } from "react-icons/bs";
 import { IoEyeSharp } from "react-icons/io5";
@@ -58,7 +59,7 @@ const Sidebar = () =>{
             
            <ul className="pt-2">
             {Menus.map((menu, index) => (
-                <>
+                <React.Fragment key={index}>
                     <li 
                         key={index} 
                         className={`text-gray-300 text-sm flex
@@ -75,7 +76,7 @@ const Sidebar = () =>{
                             ${!isOpen && "hidden"}`}>{menu.title}
                         </p>
                     </li>
-                </>
+                </React.Fragment>
             ))}
 
            </ul>
