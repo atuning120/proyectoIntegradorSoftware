@@ -5,7 +5,7 @@ import Login from './Login';
 import BackButton from '../components/BackButton';
 import { useMutation, gql } from '@apollo/client';
 import { userClient } from '../apolloClient';
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const isAuthenticated = () => {
 	const token = localStorage.getItem('token');
@@ -70,11 +70,14 @@ const Signup = () => {
     const [isNameOK,setIsNameOK] = useState(false);
 
     const [signupGQL] = useMutation(SIGNUP_MUTATION, {client:userClient});
+    const [showPassword, setShowPassword] = useState(false);
+
 
     const handleRoleButtonClick = (e) => {
         setIsTeacher(!isTeacher);
     };
 
+    
 
 
     const handleSignUpClick = async (evento) => {
@@ -183,6 +186,10 @@ const Signup = () => {
     };
     
 
+    const toggleVisibility = () => {
+        setShowPassword((prev) => !prev);//este formato es mas apropiado para async
+      };
+
     return(
         <div className='flex h-screen -translate-y-3'>
             <div className='flex-1 w-1/2 flex justify-center rounded-md border-slate-200 border-2'>
@@ -272,7 +279,7 @@ const Signup = () => {
                         <label htmlFor='password' className='text-black text-2xl'>Clave</label>
                         <input
                             placeholder="Contraseña aquí..."
-                            type="password"
+                            type={showPassword? 'text' : 'password'}
                             id="password"
                             value={password}
                             onChange={(evento) =>setPassword(evento.target.value)}
@@ -280,6 +287,14 @@ const Signup = () => {
                             className='w-full text-2xl rounded-md mt-3 py-1 hover:bg-gray-200'
                             maxLength={16} />
                             {errorState[5] && <p className='-translate-y-14 translate-x-36 absolute text-red-500 text-sm mt-1'>{"Error, contraseña no cumple los requisitos"}</p>} {/* Error Message */}
+
+                            <button
+                              onClick={toggleVisibility}
+                              type="button"
+                              className="text-2xl -translate-x-9 translate-y-1 focus:outline-none"
+                          >
+                              {showPassword ? <FaEye /> : <FaEyeSlash />}
+                          </button>
                     </div>
 
                     <div className='phone'>

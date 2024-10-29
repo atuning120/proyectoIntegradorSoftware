@@ -71,9 +71,7 @@ const SetPerfil = () =>{
     return(
     <div className="mt-8 p-4 flex justify-center mr-16">
         <div className="w-[60%] bg-white rounded-lg shadow-lg p-8 flex flex-col items-center">
-            <h1 className="text-2xl text-gray-800 font-bold mb-12">
-                Modificar datos de usuario
-            </h1>
+            <h1 className="text-4xl font-bold mb-28">Modificar datos</h1>
             <input className="w-[450px] text-2xl relative hover:bg-gray-200 rounded-sm mb-6" 
             placeholder={`Nombre: ${userObj.nombre || ''}`}
             value={nombre}
