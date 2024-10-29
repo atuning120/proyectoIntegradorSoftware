@@ -30,7 +30,9 @@ const Perfil = () =>{
     }, [token]);
 
     if (!user) {
-        return <h1>ERROR</h1>;
+        setTimeout(() => {
+            return (<h1 className="flex justify-center text-3xl text-red-600">ERROR: Falta iniciar sesion</h1>);
+        }, 500);
     }
     return (
         <div className="mt-8 p-4 flex justify-center mr-16">
