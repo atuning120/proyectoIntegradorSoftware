@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
-import {Image} from "@nextui-org/react";
-import {CircularProgress} from "@nextui-org/react";
-import {productClient} from '../apolloClient';
+import { gql, useQuery, useMutation } from '@apollo/client';
+import { Image, CircularProgress } from "@nextui-org/react";
+import { productClient, cartClient } from '../apolloClient';
 
+// Definir la query GraphQL
 const GET_CURSOS = gql`
   query GetCursos {
     cursos {
@@ -18,54 +18,85 @@ const GET_CURSOS = gql`
   }
 `;
 
+// Definir la mutación para agregar un producto
+const AGREGAR_PRODUCTO = gql`
+  mutation AgregarProducto($IDUsuario: ID!, $IDProducto: ID!) {
+    AgregarProducto(input: { IDUsuario: $IDUsuario, IDProducto: $IDProducto }) {
+      id
+      idUsuario
+      idProductos
+    }
+  }
+`;
+
+// Función para verificar si el usuario está autenticado
+const isAuthenticated = () => {
+  const token = localStorage.getItem('token');
+  return !!token;
+};
+
+// Función para extraer el ID del usuario
+const ExtraerIdUsuario = () => {
+  if (isAuthenticated()) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user.id;
+  } else {
+    console.warn('Usuario no autenticado');
+    return null;
+  }
+};
+
 const CursosPage = () => {
-  const { loading, error, data } = useQuery(GET_CURSOS, {client: productClient});
+  const { loading, error, data } = useQuery(GET_CURSOS, { client: productClient });
+  const [agregarProducto] = useMutation(AGREGAR_PRODUCTO, { client: cartClient });
   const [selectedCourse, setSelectedCourse] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedLevel, setSelectedLevel] = useState('');
   const [sortOrder, setSortOrder] = useState('');
+  const [loadingProduct, setLoadingProduct] = useState(null);
 
-  const handleFilterChange = (e) => {
-    setSelectedCourse(e.target.value);
+  // Manejar el cambio de filtros
+  const handleFilterChange = (e) => setSelectedCourse(e.target.value);
+  const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
+  const handleLevelChange = (e) => setSelectedLevel(e.target.value);
+  const handleSortOrderChange = (e) => setSortOrder(e.target.value);
+
+  // Función para añadir un producto al carrito
+  const AddCarritoFunc = async (id) => {
+    const idUsuario = ExtraerIdUsuario();
+    if (!idUsuario) return; // No ejecutar si no hay usuario
+
+    setLoadingProduct(id); // Establecer el producto que está añadiendo
+
+    try {
+      await agregarProducto({
+        variables: {
+          IDUsuario: idUsuario,
+          IDProducto: id,
+        },
+      });
+      console.log(`Producto ${id} añadido al carrito`);
+    } catch (error) {
+      console.error('Error al añadir al carrito:', error);
+    } finally {
+      setLoadingProduct(null); // Restablecer el estado de carga
+    }
   };
 
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-  };
+  if (loading) return <CircularProgress aria-label="Loading..." />;
+  if (error) return <p>Error al cargar los cursos: {error.message}</p>;
 
-  const handleLevelChange = (e) => {
-    setSelectedLevel(e.target.value);
-  };
-
-  const handleSortOrderChange = (e) => {
-    setSortOrder(e.target.value);
-  };
-
-  // Si los datos están cargando
-  if (loading) return <CircularProgress aria-label="Loading..."/>;
-
-  // Si hay un error al obtener los datos
-  // if (error) return <p>Error al cargar los cursos: {error.message}</p>;
-  if (error) {
-    console.error(error); // Mostrar el error completo en la consola del navegador
-    return <p>Error al cargar los cursos: {error.message}</p>;
-  }
-  
-  // Obtener los cursos desde los datos de la query
   const products = data.cursos;
 
   const filteredProducts = products
-  .filter((product) => (selectedCourse ? product.nombre === selectedCourse : true))
-  .filter((product) => (selectedCategory ? product.categoria === selectedCategory : true))
-  .filter((product) => (selectedLevel ? product.nivel === selectedLevel : true))
-  .sort((a, b) => {
-    if (sortOrder === 'priceAsc') {
-      return a.precio - b.precio;
-    } else if (sortOrder === 'priceDesc') {
-      return b.precio - a.precio;
-    }
-    return 0;
-  });
+    .filter((product) => (selectedCourse ? product.nombre === selectedCourse : true))
+    .filter((product) => (selectedCategory ? product.categoria === selectedCategory : true))
+    .filter((product) => (selectedLevel ? product.nivel === selectedLevel : true))
+    .sort((a, b) => {
+      if (sortOrder === 'priceAsc') return a.precio - b.precio;
+      if (sortOrder === 'priceDesc') return b.precio - a.precio;
+      return 0;
+    });
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -140,29 +171,42 @@ const CursosPage = () => {
         </label>
       </div>
 
-      {/* Mostrar los cursos*/}
+      {/* Mostrar cursos filtrados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-  {filteredProducts.map((product, index) => (
-    <div key={index} className="bg-white rounded-lg shadow-md p-4 flex flex-col">
-      <Image
-        isBlurred
-        width={240}
-        src={product.imagen}
-        alt="NextUI Album Cover"
-        className="w-full h-48 object-cover rounded-md mb-4"
-      />
-      <h3 className="text-lg font-semibold">{product.nombre}</h3>
-      <p className="text-gray-600 flex-grow">{product.descripcion}</p>
-      <p className="text-gray-600 flex-grow">{product.categoria}</p>
-      <p className="text-gray-600 flex-grow">{product.nivel}</p>
-      <div className="mt-4">
-        <span className="text-xl font-bold">
-          ${product.precio.toLocaleString('es-ES')}
-        </span>
+  {filteredProducts.map((product) => (
+    <div 
+      key={product.id} 
+      className="bg-white rounded-lg shadow-md p-4 flex flex-col h-full"
+    >
+      {/* Contenido superior */}
+      <div className="flex-grow">
+        <Image
+          src={product.imagen}
+          alt={product.nombre}
+          className="w-full h-48 object-cover rounded-md mb-4"
+        />
+        <h3 className="text-lg font-semibold">{product.nombre}</h3>
+        <p className="text-gray-600">{product.descripcion}</p>
+        <p className="text-gray-600">
+          {product.categoria} - {product.nivel}
+        </p>
       </div>
-      <button className="mt-4 w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-300">
-        Añadir al Carrito
-      </button>
+
+      {/* Contenedor de precio y botón, siempre alineados al fondo */}
+      <div className="mt-auto">
+        <div className="mt-4">
+          <span className="text-xl font-bold">
+            ${product.precio.toLocaleString('es-ES')}
+          </span>
+        </div>
+        <button
+          onClick={() => AddCarritoFunc(product.id)}
+          className="mt-2 w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 transition duration-300"
+          disabled={loadingProduct === product.id}
+        >
+          {loadingProduct === product.id ? 'Añadiendo...' : 'Añadir al Carrito'}
+        </button>
+      </div>
     </div>
   ))}
 </div>
