@@ -7,18 +7,152 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
 
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/consumer"
+	connection "github.com/proyectoIntegradorSoftware/ms-carrito/internal/database"
 	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/graph/model"
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/repository"
+	"github.com/proyectoIntegradorSoftware/ms-carrito/internal/services"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// AgregarProducto is the resolver for the AgregarProducto field.
+func (r *mutationResolver) AgregarProducto(ctx context.Context, input model.AgregarProductoInput) (*model.Carrito, error) {
+	consumer.ValidacionesRPC(input.IDUsuario, input.IDProducto)
+
+	client, err := connection.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			log.Fatalf("Error desconectando MongoDB: %v", err)
+		}
+	}()
+
+	db := client.Database("Carrito")
+	carritorepo := repository.NewHisotialRepositoryImpl(db)
+	carritoService := services.NewServicioHistorialImpl(carritorepo)
+
+	isAdded, err := carritoService.AnadirProduct(ctx, input.IDUsuario, input.IDProducto)
+	if err != nil {
+		return nil, fmt.Errorf("error al agregar producto al carrito: %v", err)
+	}
+
+	if !isAdded {
+		return nil, fmt.Errorf("el producto ya está en el carrito")
+	}
+
+	carritoActualizado, err := carritorepo.FindById(ctx, input.IDUsuario)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el carrito actualizado: %v", err)
+	}
+
+	return &model.Carrito{
+		ID:          carritoActualizado.ID.Hex(),
+		IDUsuario:   carritoActualizado.IDUsuario.Hex(),
+		IDProductos: consumer.ConvertObjectIDsToStrings(carritoActualizado.IDProductos),
+	}, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// EliminarProducto is the resolver for the EliminarProducto field.
+func (r *mutationResolver) EliminarProducto(ctx context.Context, input model.EliminarProductoInput) (*model.Carrito, error) {
+	consumer.ValidacionesRPC(input.IDUsuario, input.IDProducto)
+
+	client, err := connection.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			log.Fatalf("Error desconectando MongoDB: %v", err)
+		}
+	}()
+
+	db := client.Database("Carrito")
+	carritorepo := repository.NewHisotialRepositoryImpl(db)
+	carritoService := services.NewServicioHistorialImpl(carritorepo)
+
+	isAdded, err := carritoService.EliminarProducto(ctx, input.IDUsuario, input.IDProducto)
+	if err != nil {
+		return nil, fmt.Errorf("error al agregar producto al carrito: %v", err)
+	}
+
+	if !isAdded {
+		return nil, fmt.Errorf("el producto ya está en el carrito")
+	}
+
+	carritoActualizado, err := carritorepo.FindById(ctx, input.IDUsuario)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el carrito actualizado: %v", err)
+	}
+
+	return &model.Carrito{
+		ID:          carritoActualizado.ID.Hex(),
+		IDUsuario:   carritoActualizado.IDUsuario.Hex(),
+		IDProductos: consumer.ConvertObjectIDsToStrings(carritoActualizado.IDProductos),
+	}, nil
+}
+
+// ObtenerCarritos is the resolver for the ObtenerCarritos field.
+func (r *queryResolver) ObtenerCarritos(ctx context.Context) ([]*model.Carrito, error) {
+
+	client, err := connection.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			log.Fatalf("Error desconectando MongoDB: %v", err)
+		}
+	}()
+
+	db := client.Database("Carrito")
+	carritorepo := repository.NewHisotialRepositoryImpl(db)
+
+	carritos, err := carritorepo.FindAllCarritos(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener todos los carritos: %v", err)
+	}
+
+	// Convertir los carritos a un formato compatible con GraphQL
+	var resultado []*model.Carrito
+	for _, carrito := range carritos {
+		resultado = append(resultado, &model.Carrito{
+			ID:          carrito.ID.Hex(),
+			IDUsuario:   carrito.IDUsuario.Hex(),
+			IDProductos: consumer.ConvertObjectIDsToStrings(carrito.IDProductos),
+		})
+	}
+	return resultado, nil
+}
+
+// ObtenerCarrito is the resolver for the ObtenerCarrito field.
+func (r *queryResolver) ObtenerCarrito(ctx context.Context, id string) (*model.Carrito, error) {
+
+	client, err := connection.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			log.Fatalf("Error desconectando MongoDB: %v", err)
+		}
+	}()
+
+	db := client.Database("Carrito")
+	carritorepo := repository.NewHisotialRepositoryImpl(db)
+
+	carritoActualizado, err := carritorepo.FindById(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el carrito actualizado: %v", err)
+	}
+
+	return &model.Carrito{
+		ID:          carritoActualizado.ID.Hex(),
+		IDUsuario:   carritoActualizado.IDUsuario.Hex(),
+		IDProductos: consumer.ConvertObjectIDsToStrings(carritoActualizado.IDProductos),
+	}, nil
 }
 
 // Mutation returns MutationResolver implementation.
