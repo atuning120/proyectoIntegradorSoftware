@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {CircularProgress} from "@nextui-org/react";
 
 const isAuthenticated = () => {
     try {
@@ -17,6 +18,7 @@ const SetPerfil = () =>{
     const [apellido, setApellido] = useState('');
     const [username, setUsername] = useState('');
     const [correo, setCorreo] = useState('');
+    const [loading,setLoading] = useState(true);
 
     const token = isAuthenticated();
 
@@ -39,13 +41,23 @@ const SetPerfil = () =>{
             } catch (error) {
                 console.error("que paso aca: "+error);
             }
+            finally{
+                setLoading(false);
+            }
+
         }
 
     },[token]);//se ejecuta 'useEffect(()=>{})'cada vez que el token cambie
+    
+    if(loading){
+        return <CircularProgress aria-label="Loading..."/>;
+    }
 
     if(!token || !userObj){
-        return (<h1 className="flex justify-center text-3xl text-red-600">ERROR: Falta iniciar sesion</h1>);
+        return (<h1 className="flex justify-center text-3xl text-red-600">ERROR: Falta iniciar sesion</h1>);//return corta la funcion aqui
     }
+
+
 
     const handleEnviarCambios = () =>{
         console.log("Estos datos se enviarian: ");
