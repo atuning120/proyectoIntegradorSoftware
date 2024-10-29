@@ -11,7 +11,7 @@ import (
 
 // Estructura del Producto
 type Product struct {
-	ID          string  `bson:"id"`
+	ID          string  `bson:"_id"`
 	Nombre      string  `bson:"nombre"`
 	Descripcion string  `bson:"descripcion"`
 	Precio      float64 `bson:"precio"`

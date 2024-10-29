@@ -7,6 +7,7 @@ import {productClient} from '../apolloClient';
 const GET_CURSOS = gql`
   query GetCursos {
     cursos {
+      id
       nombre
       descripcion
       precio
