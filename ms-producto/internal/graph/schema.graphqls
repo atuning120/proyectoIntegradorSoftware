@@ -1,4 +1,5 @@
 type Curso {
+  id: ID!
   nombre: String!
   descripcion: String!
   precio: Float!

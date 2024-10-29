@@ -67,6 +67,7 @@ func (r *queryResolver) Cursos(ctx context.Context) ([]*model.Curso, error) {
 	var cursos []*model.Curso
 	for _, cursoDB := range cursosDB {
 		curso := &model.Curso{
+			ID:          cursoDB.ID,
 			Nombre:      cursoDB.Nombre,
 			Descripcion: cursoDB.Descripcion,
 			Precio:      cursoDB.Precio,
@@ -99,6 +100,7 @@ func (r *queryResolver) TopCursos(ctx context.Context) ([]*model.Curso, error) {
 	var topCursos []*model.Curso
 	for _, cursoDB := range topCursosDB {
 		curso := &model.Curso{
+			ID:          cursoDB.ID,
 			Nombre:      cursoDB.Nombre,
 			Descripcion: cursoDB.Descripcion,
 			Precio:      cursoDB.Precio,

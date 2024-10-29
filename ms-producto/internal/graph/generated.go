@@ -50,6 +50,7 @@ type ComplexityRoot struct {
 	Curso struct {
 		Categoria   func(childComplexity int) int
 		Descripcion func(childComplexity int) int
+		ID          func(childComplexity int) int
 		Imagen      func(childComplexity int) int
 		Nivel       func(childComplexity int) int
 		Nombre      func(childComplexity int) int
@@ -107,6 +108,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Curso.Descripcion(childComplexity), true
+
+	case "Curso.id":
+		if e.complexity.Curso.ID == nil {
+			break
+		}
+
+		return e.complexity.Curso.ID(childComplexity), true
 
 	case "Curso.imagen":
 		if e.complexity.Curso.Imagen == nil {
@@ -310,7 +318,7 @@ func (ec *executionContext) field_Mutation_crearCurso_argsInput(
 ) (model.NewCurso, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNNewCurso2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐNewCurso(ctx, tmp)
+		return ec.unmarshalNNewCurso2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐNewCurso(ctx, tmp)
 	}
 
 	var zeroVal model.NewCurso
@@ -393,6 +401,50 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _Curso_id(ctx context.Context, field graphql.CollectedField, obj *model.Curso) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Curso_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Curso_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Curso",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
 
 func (ec *executionContext) _Curso_nombre(ctx context.Context, field graphql.CollectedField, obj *model.Curso) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Curso_nombre(ctx, field)
@@ -730,7 +782,7 @@ func (ec *executionContext) _Mutation_crearCurso(ctx context.Context, field grap
 	}
 	res := resTmp.(*model.Curso)
 	fc.Result = res
-	return ec.marshalNCurso2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐCurso(ctx, field.Selections, res)
+	return ec.marshalNCurso2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐCurso(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_crearCurso(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -741,6 +793,8 @@ func (ec *executionContext) fieldContext_Mutation_crearCurso(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Curso_id(ctx, field)
 			case "nombre":
 				return ec.fieldContext_Curso_nombre(ctx, field)
 			case "descripcion":
@@ -801,7 +855,7 @@ func (ec *executionContext) _Query_cursos(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.([]*model.Curso)
 	fc.Result = res
-	return ec.marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐCursoᚄ(ctx, field.Selections, res)
+	return ec.marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐCursoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_cursos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -812,6 +866,8 @@ func (ec *executionContext) fieldContext_Query_cursos(_ context.Context, field g
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Curso_id(ctx, field)
 			case "nombre":
 				return ec.fieldContext_Curso_nombre(ctx, field)
 			case "descripcion":
@@ -861,7 +917,7 @@ func (ec *executionContext) _Query_topCursos(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.Curso)
 	fc.Result = res
-	return ec.marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐCursoᚄ(ctx, field.Selections, res)
+	return ec.marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐCursoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_topCursos(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -872,6 +928,8 @@ func (ec *executionContext) fieldContext_Query_topCursos(_ context.Context, fiel
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Curso_id(ctx, field)
 			case "nombre":
 				return ec.fieldContext_Curso_nombre(ctx, field)
 			case "descripcion":
@@ -2883,6 +2941,11 @@ func (ec *executionContext) _Curso(ctx context.Context, sel ast.SelectionSet, ob
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Curso")
+		case "id":
+			out.Values[i] = ec._Curso_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "nombre":
 			out.Values[i] = ec._Curso_nombre(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -3425,11 +3488,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNCurso2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐCurso(ctx context.Context, sel ast.SelectionSet, v model.Curso) graphql.Marshaler {
+func (ec *executionContext) marshalNCurso2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐCurso(ctx context.Context, sel ast.SelectionSet, v model.Curso) graphql.Marshaler {
 	return ec._Curso(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐCursoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Curso) graphql.Marshaler {
+func (ec *executionContext) marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐCursoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Curso) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3453,7 +3516,7 @@ func (ec *executionContext) marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproy
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNCurso2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐCurso(ctx, sel, v[i])
+			ret[i] = ec.marshalNCurso2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐCurso(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3473,7 +3536,7 @@ func (ec *executionContext) marshalNCurso2ᚕᚖgithubᚗcomᚋatuning120ᚋproy
 	return ret
 }
 
-func (ec *executionContext) marshalNCurso2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐCurso(ctx context.Context, sel ast.SelectionSet, v *model.Curso) graphql.Marshaler {
+func (ec *executionContext) marshalNCurso2ᚖgithubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐCurso(ctx context.Context, sel ast.SelectionSet, v *model.Curso) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -3498,7 +3561,22 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
-func (ec *executionContext) unmarshalNNewCurso2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋcomicsᚑleaguesᚑstoreᚋservicioᚑproductoᚋsrcᚋgraphᚋmodelᚐNewCurso(ctx context.Context, v interface{}) (model.NewCurso, error) {
+func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalID(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNNewCurso2githubᚗcomᚋatuning120ᚋproyectoIntegradorSoftwareᚋmsᚑproductoᚋinternalᚋgraphᚋmodelᚐNewCurso(ctx context.Context, v interface{}) (model.NewCurso, error) {
 	res, err := ec.unmarshalInputNewCurso(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
