@@ -29,6 +29,8 @@ const AGREGAR_PRODUCTO = gql`
   }
 `;
 
+
+
 // Función para verificar si el usuario está autenticado
 const isAuthenticated = () => {
   const token = localStorage.getItem('token');
