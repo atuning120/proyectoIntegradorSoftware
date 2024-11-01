@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
 import { cartClient } from '../apolloClient'; // Ajusta la ruta según tu estructura
 
-// Query para obtener el carrito con los IDs de los productos
 const OBTENER_CARRITO = gql`
   query ObtenerCarrito($id: ID!) {
     ObtenerCarrito(id: $id) {
@@ -15,36 +14,43 @@ const OBTENER_CARRITO = gql`
 `;
 
 export const CartModal = ({ isOpen, closeModal }) => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const [cartData, setCartData] = useState([]); // Estado predeterminado como lista vacía
 
-  // Función para verificar si el usuario está autenticado
-const isAuthenticated = () => {
-  const token = localStorage.getItem('token');
-  return !!token;
-};
+  const isAuthenticated = () => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  };
 
-// Función para extraer el ID del usuario
-const ExtraerIdUsuario = () => {
-  if (isAuthenticated()) {
-    const user = JSON.parse(localStorage.getItem('user'));
-    return user.id;
-  } else {
-    console.warn('Usuario no autenticado');
-    return null;
-  }
-};
+  const ExtraerIdUsuario = () => {
+    if (isAuthenticated()) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user.id;
+    } else {
+      //Usuario no autenticado
+      return null;
+    }
+  };
 
-const userId = ExtraerIdUsuario();
+  const userId = ExtraerIdUsuario();
 
-  // Ejecutar la query para obtener el carrito
   const { data, loading, error } = useQuery(OBTENER_CARRITO, {
     variables: { id: userId },
     skip: !userId, // Evitar la query si no hay userId
     client: cartClient,
+    onError: (error) => {
+      setErrorMessage('Error al cargar el carrito. Mostrando carrito vacío.');
+      console.error('Detalles del error:', error);
+    },
+    onCompleted: (data) => {
+      if (data && data.ObtenerCarrito) {
+        setCartData(data.ObtenerCarrito.idProductos);
+      }
+    },
   });
 
-  // Mostrar los IDs de los productos en consola
   useEffect(() => {
-    if (data) {
+    if (data && data.ObtenerCarrito) {
       console.log('IDs de productos del carrito:', data.ObtenerCarrito.idProductos);
     }
   }, [data]);
@@ -52,21 +58,16 @@ const userId = ExtraerIdUsuario();
   if (!isOpen) return null;
 
   if (loading) return <p>Cargando...</p>;
-  if (error) {
-    console.error('Error al cargar el carrito:', error);
-    return <p>Error al cargar el carrito.</p>;
-  }
-
-  const { idProductos } = data.ObtenerCarrito;
+  if (errorMessage) return <p>{errorMessage}</p>;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto p-6">
         <h2 className="text-xl font-semibold mb-4">Carrito de Compras</h2>
 
-        {idProductos.length > 0 ? (
+        {cartData.length > 0 ? (
           <ul className="space-y-3">
-            {idProductos.map((productId, index) => (
+            {cartData.map((productId, index) => (
               <li key={index} className="flex justify-between items-center">
                 <span>ID del Producto: {productId}</span>
               </li>

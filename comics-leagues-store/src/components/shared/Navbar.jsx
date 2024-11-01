@@ -1,10 +1,22 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { navbarLinks } from '../../constants/links';
 import { HiOutlineSearch, HiOutlineShoppingBag } from 'react-icons/hi';
 import { FaBarsStaggered } from 'react-icons/fa6';
 import { Logo } from './Logo';
-import { CartModal } from '../CartModal'; 
+import { CartModal } from '../CartModal';
+import { cartClient } from '../../apolloClient'; // Ajusta la ruta según tu estructura
+import { useQuery, gql } from '@apollo/client';
+
+const OBTENER_CARRITO = gql`
+  query ObtenerCarrito($id: ID!) {
+    ObtenerCarrito(id: $id) {
+      id
+      idUsuario
+      idProductos
+    }
+  }
+`;
 
 const isAuthenticated = () => {
   const token = localStorage.getItem('token');
@@ -20,9 +32,19 @@ const PrimerLetra = () => {
   }
 };
 
+const ExtraerIdUsuario = () => {
+  if (isAuthenticated()) {
+    const user = JSON.parse(localStorage.getItem('user'));
+    return user.id;
+  } else {
+    console.warn('Usuario no autenticado');
+    return null;
+  }
+};
+
 const perfil = () => (isAuthenticated() ? '/userprofile' : '/login');
 
-export const Navbar = () => {
+const Navbar = () => {
   const [searchText, setSearchText] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false); 
   const [cartItems, setCartItems] = useState([]); 
@@ -32,6 +54,24 @@ export const Navbar = () => {
   };
 
   const toggleCartModal = () => setIsCartOpen(!isCartOpen); 
+
+  const userId = ExtraerIdUsuario();
+
+  const { data, error } = useQuery(OBTENER_CARRITO, {
+    variables: { id: userId },
+    skip: !userId, // Evitar la query si no hay userId
+    client: cartClient,
+  });
+
+  useEffect(() => {
+    if (data && data.ObtenerCarrito) {
+      setCartItems(data.ObtenerCarrito.idProductos);
+    }
+  }, [data]);
+
+  if (error) {
+    console.error('Error fetching cart data:', error);
+  }
 
   return (
     <>
@@ -97,3 +137,5 @@ export const Navbar = () => {
     </>
   );
 };
+
+export { Navbar };
