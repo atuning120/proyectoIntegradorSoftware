@@ -129,7 +129,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
                   <span className="text-lg font-semibold text-cyan-600">${product.precio}</span>
                 </div>
 
-                <Button className="ml-4 px-2 py-1" color="danger" 
+                <Button className="ml-4 px-2 py-1" color="danger"  
                 //onClick={() => handleEliminarProducto(product.id)}
                 >
                   Eliminar
