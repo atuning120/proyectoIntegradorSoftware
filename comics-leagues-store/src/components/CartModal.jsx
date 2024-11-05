@@ -85,11 +85,11 @@ export const CartModal = ({ isOpen, closeModal }) => {
   }, [cartDataResult]);
 
   useEffect(() => {
-    // Refetch de los detalles de los productos cada vez que `cartData` cambie
+    // Refetch de los detalles de los productos solo si `cartData` cambia y no está vacío
     if (cartData.length > 0) {
-      refetchProductDetails();
+      refetchProductDetails({ ids: cartData, userId });
     }
-  }, [cartData, refetchProductDetails]);
+  }, [cartData, userId, refetchProductDetails]);
 
   useEffect(() => {
     const handleUserLoggedOut = () => {
@@ -129,13 +129,10 @@ export const CartModal = ({ isOpen, closeModal }) => {
                   <span className="text-lg font-semibold text-cyan-600">${product.precio}</span>
                 </div>
 
-                <Button className="ml-4 px-2 py-1" color="danger"  
-                //onClick={() => handleEliminarProducto(product.id)}
-                >
+                <Button className="ml-4 px-2 py-1" color="danger">
                   Eliminar
                 </Button>
               </li>
-
             ))}
           </ul>
         ) : (
