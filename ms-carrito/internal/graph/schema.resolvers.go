@@ -18,7 +18,8 @@ import (
 
 // AgregarProducto is the resolver for the AgregarProducto field.
 func (r *mutationResolver) AgregarProducto(ctx context.Context, input model.AgregarProductoInput) (*model.Carrito, error) {
-	consumer.ValidacionesRPC(input.IDUsuario, input.IDProducto)
+	consumer.ValidacionUsuarioRPC(input.IDUsuario)
+	consumer.ValidacionProductoRPC(input.IDProducto)
 
 	client, err := connection.ConnectToMongoDB()
 	if err != nil {
@@ -57,7 +58,8 @@ func (r *mutationResolver) AgregarProducto(ctx context.Context, input model.Agre
 
 // EliminarProducto is the resolver for the EliminarProducto field.
 func (r *mutationResolver) EliminarProducto(ctx context.Context, input model.EliminarProductoInput) (*model.Carrito, error) {
-	consumer.ValidacionesRPC(input.IDUsuario, input.IDProducto)
+	consumer.ValidacionUsuarioRPC(input.IDUsuario)
+	consumer.ValidacionProductoRPC(input.IDProducto)
 
 	client, err := connection.ConnectToMongoDB()
 	if err != nil {
@@ -94,9 +96,44 @@ func (r *mutationResolver) EliminarProducto(ctx context.Context, input model.Eli
 	}, nil
 }
 
+// VaciarCarrito is the resolver for the VaciarCarrito field.
+func (r *mutationResolver) VaciarCarrito(ctx context.Context, idUsuario string) (*model.Carrito, error) {
+	consumer.ValidacionUsuarioRPC(idUsuario)
+	client, err := connection.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			log.Fatalf("Error desconectando MongoDB: %v", err)
+		}
+	}()
+	db := client.Database("Carrito")
+	carrtiorep := repository.NewHisotialRepositoryImpl(db)
+	carritoserv := services.NewServicioHistorialImpl(carrtiorep)
+
+	isDeleted, err := carritoserv.EliminarProductos(ctx, idUsuario)
+	if err != nil {
+		return nil, fmt.Errorf("error al vaciar el carrito: %v", err)
+	}
+	if !isDeleted {
+		return nil, fmt.Errorf("el carrito ya está vacío")
+	}
+	carritoActualizado, err := carrtiorep.FindById(ctx, idUsuario)
+	if err != nil {
+		return nil, fmt.Errorf("error al obtener el carrito actualizado: %v", err)
+	}
+
+	return &model.Carrito{
+		ID:          carritoActualizado.ID.Hex(),
+		IDUsuario:   carritoActualizado.IDUsuario.Hex(),
+		IDProductos: consumer.ConvertObjectIDsToStrings(carritoActualizado.IDProductos),
+	}, nil
+
+}
+
 // ObtenerCarritos is the resolver for the ObtenerCarritos field.
 func (r *queryResolver) ObtenerCarritos(ctx context.Context) ([]*model.Carrito, error) {
-
 	client, err := connection.ConnectToMongoDB()
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
@@ -129,7 +166,6 @@ func (r *queryResolver) ObtenerCarritos(ctx context.Context) ([]*model.Carrito, 
 
 // ObtenerCarrito is the resolver for the ObtenerCarrito field.
 func (r *queryResolver) ObtenerCarrito(ctx context.Context, id string) (*model.Carrito, error) {
-
 	client, err := connection.ConnectToMongoDB()
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to MongoDB: %w", err)
