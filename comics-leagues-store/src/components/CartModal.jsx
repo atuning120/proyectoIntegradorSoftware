@@ -42,7 +42,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
   const ExtraerIdUsuario = () => {
     if (isAuthenticated()) {
       const user = JSON.parse(localStorage.getItem('user'));
-      return user.id;
+      return user?.id || null;
     } else {
       return null;
     }
@@ -51,7 +51,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
   const userId = ExtraerIdUsuario();
 
   // Query para obtener el carrito
-  const { data: cartDataResult, loading, error } = useQuery(OBTENER_CARRITO, {
+  const { data: cartDataResult, loading: loadingCart } = useQuery(OBTENER_CARRITO, {
     variables: { id: userId },
     skip: !userId,
     client: cartClient,
@@ -64,7 +64,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
   // Query para obtener los detalles de los productos en el carrito
   const { refetch: refetchProductDetails } = useQuery(CURSOS_POR_ID, {
     variables: { ids: cartData, userId },
-    skip: cartData.length === 0,
+    skip: cartData.length === 0 || !userId,
     client: productClient,
     onCompleted: (data) => {
       if (data && data.cursosPorId) {
@@ -86,7 +86,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
 
   useEffect(() => {
     // Refetch de los detalles de los productos solo si `cartData` cambia y no está vacío
-    if (cartData.length > 0) {
+    if (cartData.length > 0 && userId) {
       refetchProductDetails({ ids: cartData, userId });
     }
   }, [cartData, userId, refetchProductDetails]);
@@ -95,6 +95,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
     const handleUserLoggedOut = () => {
       setCartData([]); // Vaciar el carrito al cerrar sesión
       setProductDetails([]);
+      setErrorMessage("Carrito vacío al cerrar sesión.");
     };
 
     window.addEventListener('userLoggedOut', handleUserLoggedOut);
@@ -104,9 +105,10 @@ export const CartModal = ({ isOpen, closeModal }) => {
     };
   }, []);
 
+
   if (!isOpen) return null;
 
-  if (loading) return <p>Cargando...</p>;
+  if (loadingCart) return <p>Cargando...</p>;
   if (errorMessage) return <p>{errorMessage}</p>;
 
   return (
@@ -129,7 +131,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
                   <span className="text-lg font-semibold text-cyan-600">${product.precio}</span>
                 </div>
 
-                <Button className="ml-4 px-2 py-1" color="danger">
+                <Button  className="ml-4 px-2 py-1" color="danger">
                   Eliminar
                 </Button>
               </li>
