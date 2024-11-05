@@ -20,7 +20,27 @@ type Query {
 
 type Mutation {
   login(username: String!, password: String!): AuthPayload!
-  signUp(input: NewUserInput!): AuthPayload! # Añade la mutación signUp
+  signUp(input: NewUserInput!): AuthPayload!
+  modificarUsuarioNombre(idUsuario: String!, input: ModificarNombre!): User
+  modificarUsuarioApellido(idUsuario: String!, input: ModificarApellido!): User
+  modificarUsuarioCorreo(idUsuario: String!, input: ModificarCorreo!): User
+  modificarUsuarioUserName(idUsuario: String!, input: ModificarUserName!): User
+}
+
+input ModificarNombre {
+  nombre: String!
+}
+
+input ModificarApellido {
+  apellido: String!
+}
+
+input ModificarCorreo {
+  correo: String!
+}
+
+input ModificarUserName {
+  username: String!
 }
 
 input NewUserInput {

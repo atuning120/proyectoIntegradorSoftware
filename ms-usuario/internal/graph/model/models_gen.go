@@ -7,6 +7,22 @@ type AuthPayload struct {
 	User  *User  `json:"user"`
 }
 
+type ModificarApellido struct {
+	Apellido string `json:"apellido"`
+}
+
+type ModificarCorreo struct {
+	Correo string `json:"correo"`
+}
+
+type ModificarNombre struct {
+	Nombre string `json:"nombre"`
+}
+
+type ModificarUserName struct {
+	Username string `json:"username"`
+}
+
 type Mutation struct {
 }
 

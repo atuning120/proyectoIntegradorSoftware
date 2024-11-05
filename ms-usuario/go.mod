@@ -3,11 +3,11 @@ module github.com/atuning120/proyectoIntegradorSoftware/ms-usuario
 go 1.23.1
 
 require (
-	github.com/99designs/gqlgen v0.17.49
+	github.com/99designs/gqlgen v0.17.55
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/rs/cors v1.11.1
 	github.com/streadway/amqp v1.1.0
-	github.com/vektah/gqlparser/v2 v2.5.16
+	github.com/vektah/gqlparser/v2 v2.5.17
 	go.mongodb.org/mongo-driver v1.16.1
 	golang.org/x/crypto v0.28.0
 )
