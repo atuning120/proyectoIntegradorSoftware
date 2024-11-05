@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
-import { cartClient } from '../apolloClient'; // Ajusta la ruta según tu estructura
+import { cartClient } from '../apolloClient';
 
 const OBTENER_CARRITO = gql`
   query ObtenerCarrito($id: ID!) {
@@ -15,7 +15,7 @@ const OBTENER_CARRITO = gql`
 
 export const CartModal = ({ isOpen, closeModal }) => {
   const [errorMessage, setErrorMessage] = useState('');
-  const [cartData, setCartData] = useState([]); // Estado predeterminado como lista vacía
+  const [cartData, setCartData] = useState([]);
 
   const isAuthenticated = () => {
     const token = localStorage.getItem('token');
@@ -27,16 +27,15 @@ export const CartModal = ({ isOpen, closeModal }) => {
       const user = JSON.parse(localStorage.getItem('user'));
       return user.id;
     } else {
-      //Usuario no autenticado
       return null;
     }
   };
 
   const userId = ExtraerIdUsuario();
 
-  const { data, loading, error } = useQuery(OBTENER_CARRITO, {
+  const { data, loading, error, refetch } = useQuery(OBTENER_CARRITO, {
     variables: { id: userId },
-    skip: !userId, // Evitar la query si no hay userId
+    skip: !userId,
     client: cartClient,
     onError: (error) => {
       setErrorMessage('Error al cargar el carrito. Mostrando carrito vacío.');
@@ -50,8 +49,21 @@ export const CartModal = ({ isOpen, closeModal }) => {
   });
 
   useEffect(() => {
+    const handleUserLoggedOut = () => {
+      setCartData([]); // Vaciar el carrito al cerrar sesión
+    };
+  
+    // Escuchar el evento de cierre de sesión
+    window.addEventListener('userLoggedOut', handleUserLoggedOut);
+  
+    return () => {
+      window.removeEventListener('userLoggedOut', handleUserLoggedOut);
+    };
+  }, []);
+
+  useEffect(() => {
     if (data && data.ObtenerCarrito) {
-      console.log('IDs de productos del carrito:', data.ObtenerCarrito.idProductos);
+      setCartData(data.ObtenerCarrito.idProductos);
     }
   }, [data]);
 

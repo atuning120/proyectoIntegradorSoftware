@@ -69,6 +69,18 @@ const Navbar = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    const handleUserLoggedOut = () => {
+      setCartItems([]); // Vaciar el carrito al cerrar sesión
+    };
+
+    window.addEventListener('userLoggedOut', handleUserLoggedOut);
+
+    return () => {
+      window.removeEventListener('userLoggedOut', handleUserLoggedOut);
+    };
+  }, []);
+
   if (error) {
     console.error('Error fetching cart data:', error);
   }
