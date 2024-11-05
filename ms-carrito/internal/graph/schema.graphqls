@@ -23,4 +23,5 @@ type Query {
 type Mutation {
   AgregarProducto(input: AgregarProductoInput!): Carrito!
   EliminarProducto(input: EliminarProductoInput!): Carrito!
+  VaciarCarrito(idUsuario: ID!): Carrito!
 }

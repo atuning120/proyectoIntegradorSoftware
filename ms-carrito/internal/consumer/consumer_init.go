@@ -22,16 +22,7 @@ func ConsumerInit() {
 	}()
 }
 
-func ValidacionesRPC(idUsuario string, idProducto string) (*model.Carrito, error) {
-	usuarioValid, err := carritovalidate.ValidarUsuarioRPC(idUsuario)
-	if err != nil {
-		return nil, fmt.Errorf("el error es %v", err)
-	}
-
-	if !usuarioValid {
-		log.Fatalf("El usuario no existe %c", err)
-		return nil, err
-	}
+func ValidacionProductoRPC(idProducto string) (*model.Carrito, error) {
 
 	productoValid, err := carritovalidate.ValidarProductoRPC(idProducto)
 	if err != nil {
@@ -42,6 +33,21 @@ func ValidacionesRPC(idUsuario string, idProducto string) (*model.Carrito, error
 		log.Fatalf("El producto no existe %c", err)
 		return nil, err
 	}
+
+	return nil, nil
+}
+
+func ValidacionUsuarioRPC(idUsuario string) (*model.Carrito, error) {
+	usuarioValid, err := carritovalidate.ValidarUsuarioRPC(idUsuario)
+	if err != nil {
+		return nil, fmt.Errorf("el error es %v", err)
+	}
+
+	if !usuarioValid {
+		log.Fatalf("El usuario no existe %c", err)
+		return nil, err
+	}
+
 	return nil, nil
 }
 

@@ -16,6 +16,7 @@ type HistorialRepository interface {
 	FindById(ctx context.Context, id string) (models.Carrito, error)
 	FindByIdCarrito(ctx context.Context, id string) (models.Carrito, error)
 	DeleteOneProduct(ctx context.Context, id string, carrito models.Carrito) (bool, error)
+	DeleteAllProducts(ctx context.Context, id string) (bool, error)
 }
 
 type HistorialRepositoryImpl struct {
@@ -26,6 +27,26 @@ func NewHisotialRepositoryImpl(db *mongo.Database) *HistorialRepositoryImpl {
 	return &HistorialRepositoryImpl{
 		Collection: db.Collection("carrito"),
 	}
+}
+
+func (s *HistorialRepositoryImpl) DeleteAllProducts(ctx context.Context, id string) (bool, error) {
+
+	objectIdUsuario, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		fmt.Printf("Error al convertir id a ObjectID: %v\n", err)
+		return false, fmt.Errorf("error al convertir id a ObjectID: %v", err)
+	}
+
+	filter := bson.M{"id_usuario": objectIdUsuario}
+	update := bson.M{"$set": bson.M{"id_productos": []primitive.ObjectID{}}}
+
+	_, err = s.Collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		fmt.Printf("Error en UpdateOne: %v\n", err)
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *HistorialRepositoryImpl) DeleteOneProduct(ctx context.Context, idProducto string, carrito models.Carrito) (bool, error) {

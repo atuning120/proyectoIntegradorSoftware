@@ -10,7 +10,10 @@ import (
 
 	crud "github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/CRUD"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/connection"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/consumer"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/graph/model"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/repository"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-producto/internal/service"
 )
 
 // Resolver de la Mutation crearCurso
@@ -113,6 +116,47 @@ func (r *queryResolver) TopCursos(ctx context.Context) ([]*model.Curso, error) {
 	}
 
 	return topCursos, nil
+}
+
+// CursosPorID is the resolver for the cursosPorId field.
+func (r *queryResolver) CursosPorID(ctx context.Context, ids []string, userID string) ([]*model.Curso, error) {
+
+	consumer.ValidacionUsuarioRPC(userID)
+	for _, id := range ids {
+		consumer.ValidacionProductoRPC(id)
+	}
+
+	// Obtener conexión a MongoDB
+	client, err := connection.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("error conectando a la base de datos: %v", err)
+	}
+
+	db := client.Database("Producto")
+	repo := repository.NewProductoRepositoryImpl(db)
+	serv := service.NewProductoServiceImpl(repo)
+
+	modelCursos, err := serv.BuscarCursos(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	var cursos []*model.Curso
+	for _, curso := range modelCursos {
+		cursos = append(cursos, &model.Curso{
+			ID:          curso.ID.Hex(),
+			Nombre:      curso.Nombre,
+			Descripcion: curso.Descripcion,
+			Precio:      curso.Precio,
+			Imagen:      curso.Imagen,
+			Categoria:   curso.Categoria,
+			Nivel:       curso.Nivel,
+			Puntuacion:  curso.Puntuacion,
+		})
+	}
+
+	return cursos, nil
+
 }
 
 // Mutation returns MutationResolver implementation.

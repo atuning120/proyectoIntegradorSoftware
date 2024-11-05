@@ -22,6 +22,7 @@ input NewCurso {
 type Query {
   cursos: [Curso!]!
   topCursos: [Curso!]!
+  cursosPorId(ids: [ID!]!, userId: ID!): [Curso!]!
 }
 
 type Mutation {
