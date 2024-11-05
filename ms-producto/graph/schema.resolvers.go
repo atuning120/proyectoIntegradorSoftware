@@ -27,6 +27,11 @@ func (r *queryResolver) TopCursos(ctx context.Context) ([]*model.Curso, error) {
 	panic(fmt.Errorf("not implemented: TopCursos - topCursos"))
 }
 
+// CursosPorID is the resolver for the cursosPorId field.
+func (r *queryResolver) CursosPorID(ctx context.Context, ids []string, userID string) ([]*model.Curso, error) {
+	panic(fmt.Errorf("not implemented: CursosPorID - cursosPorId"))
+}
+
 // Mutation returns graph.MutationResolver implementation.
 func (r *Resolver) Mutation() graph.MutationResolver { return &mutationResolver{r} }
 

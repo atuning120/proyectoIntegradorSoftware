@@ -20,6 +20,98 @@ func NewUsuarioRepository(db *mongo.Database) *UsuarioRepository {
 	}
 }
 
+func (r *UsuarioRepository) UpdateApellido(ctx context.Context, idUsuario string, apellido string) (bool, error) {
+	objID, err := primitive.ObjectIDFromHex(idUsuario)
+	if err != nil {
+		return false, err
+	}
+
+	filter := bson.M{"_id": objID}
+	update := bson.M{
+		"$set": bson.M{
+			"apellido": apellido,
+		},
+	}
+	result, err := r.Collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return false, err
+	}
+	if result.MatchedCount == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (r *UsuarioRepository) UpdateEmail(ctx context.Context, idUsuario string, email string) (bool, error) {
+	objID, err := primitive.ObjectIDFromHex(idUsuario)
+	if err != nil {
+		return false, err
+	}
+
+	filter := bson.M{"_id": objID}
+	update := bson.M{
+		"$set": bson.M{
+			"correo": email,
+		},
+	}
+	result, err := r.Collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return false, err
+	}
+	if result.MatchedCount == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (r *UsuarioRepository) UpdateUsername(ctx context.Context, idUsuario string, username string) (bool, error) {
+	objID, err := primitive.ObjectIDFromHex(idUsuario)
+	if err != nil {
+		return false, err
+	}
+
+	filter := bson.M{"_id": objID}
+	update := bson.M{
+		"$set": bson.M{
+			"username": username,
+		},
+	}
+	result, err := r.Collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return false, err
+	}
+	if result.MatchedCount == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (r *UsuarioRepository) UpdateName(ctx context.Context, idUsuario string, nombreNumero string) (bool, error) {
+	objID, err := primitive.ObjectIDFromHex(idUsuario)
+	if err != nil {
+		return false, err
+	}
+
+	filter := bson.M{"_id": objID}
+	update := bson.M{
+		"$set": bson.M{
+			"nombre": nombreNumero,
+		},
+	}
+	result, err := r.Collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return false, err
+	}
+	if result.MatchedCount == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
 func (r *UsuarioRepository) ExisteUsuario(ctx context.Context, id string) (bool, error) {
 
 	objID, err := primitive.ObjectIDFromHex(id)

@@ -13,6 +13,8 @@ import (
 	crud "github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/CRUD"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/db"
 	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/graph/model"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/repository"
+	"github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/internal/service"
 	usuariovalidate "github.com/atuning120/proyectoIntegradorSoftware/ms-usuario/rabbit/usuario_validate"
 	jwt "github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson"
@@ -198,22 +200,112 @@ func (r *mutationResolver) SignUp(ctx context.Context, input model.NewUserInput)
 
 // ModificarUsuarioNombre is the resolver for the modificarUsuarioNombre field.
 func (r *mutationResolver) ModificarUsuarioNombre(ctx context.Context, idUsuario string, input model.ModificarNombre) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: ModificarUsuarioNombre - modificarUsuarioNombre"))
+
+	client, err := db.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("error de conexión a la base de datos: %v", err)
+	}
+
+	database := client.Database("Usuario")
+	repo := repository.NewUsuarioRepository(database)
+	serv := service.NewUsuarioService(repo)
+
+	result, err := serv.CambioNombre(ctx, idUsuario, input.Nombre)
+	if err != nil {
+		log.Println("Error al modificar el nombre del usuario:", err)
+		return nil, nil
+	}
+
+	if !result {
+		return nil, fmt.Errorf("no se pudo modificar el nombre del usuario")
+	}
+
+	return &model.User{
+		ID:     idUsuario,
+		Nombre: input.Nombre,
+	}, nil
 }
 
 // ModificarUsuarioApellido is the resolver for the modificarUsuarioApellido field.
 func (r *mutationResolver) ModificarUsuarioApellido(ctx context.Context, idUsuario string, input model.ModificarApellido) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: ModificarUsuarioApellido - modificarUsuarioApellido"))
+
+	client, err := db.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("error de conexión a la base de datos: %v", err)
+	}
+
+	database := client.Database("Usuario")
+	repo := repository.NewUsuarioRepository(database)
+	serv := service.NewUsuarioService(repo)
+
+	result, err := serv.CambioApellido(ctx, idUsuario, input.Apellido)
+	if err != nil {
+		log.Println("Error al modificar el apellido del usuario:", err)
+		return nil, nil
+	}
+
+	if !result {
+		return nil, fmt.Errorf("no se pudo modificar el apellido del usuario")
+	}
+
+	return &model.User{
+		ID:       idUsuario,
+		Apellido: input.Apellido,
+	}, nil
 }
 
 // ModificarUsuarioCorreo is the resolver for the modificarUsuarioCorreo field.
 func (r *mutationResolver) ModificarUsuarioCorreo(ctx context.Context, idUsuario string, input model.ModificarCorreo) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: ModificarUsuarioCorreo - modificarUsuarioCorreo"))
+	client, err := db.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("error de conexión a la base de datos: %v", err)
+	}
+
+	database := client.Database("Usuario")
+	repo := repository.NewUsuarioRepository(database)
+	serv := service.NewUsuarioService(repo)
+
+	result, err := serv.CambioCorreo(ctx, idUsuario, input.Correo)
+	if err != nil {
+		log.Println("Error al modificar el correo del usuario:", err)
+		return nil, nil
+	}
+
+	if !result {
+		return nil, fmt.Errorf("no se pudo modificar el correo del usuario")
+	}
+
+	return &model.User{
+		ID:     idUsuario,
+		Correo: input.Correo,
+	}, nil
 }
 
 // ModificarUsuarioUserName is the resolver for the modificarUsuarioUserName field.
 func (r *mutationResolver) ModificarUsuarioUserName(ctx context.Context, idUsuario string, input model.ModificarUserName) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: ModificarUsuarioUserName - modificarUsuarioUserName"))
+	client, err := db.ConnectToMongoDB()
+	if err != nil {
+		return nil, fmt.Errorf("error de conexión a la base de datos: %v", err)
+	}
+
+	database := client.Database("Usuario")
+	repo := repository.NewUsuarioRepository(database)
+	serv := service.NewUsuarioService(repo)
+
+	result, err := serv.CambioNombreUsuario(ctx, idUsuario, input.Username)
+	if err != nil {
+		log.Println("Error al modificar el username del usuario:", err)
+		return nil, nil
+	}
+
+	if !result {
+		return nil, fmt.Errorf("no se pudo modificar el username del usuario")
+	}
+
+	return &model.User{
+		ID:       idUsuario,
+		Username: input.Username,
+	}, nil
 }
 
 // GetUser is the resolver for the getUser field.
