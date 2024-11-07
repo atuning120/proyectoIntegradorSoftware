@@ -29,8 +29,6 @@ const AGREGAR_PRODUCTO = gql`
   }
 `;
 
-
-
 // Función para verificar si el usuario está autenticado
 const isAuthenticated = () => {
   const token = localStorage.getItem('token');
@@ -105,17 +103,17 @@ const CursosPage = () => {
       {/* Filtro de búsqueda */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {/* Filtrar por cursos*/}
-        <label htmlFor="courseFilter" className=" p-4 text-lg font-medium text-gray-700">
+        <label htmlFor="courseFilter" className="p-4 text-lg font-medium text-gray-700">
           Filtrar por Curso:
           <select
             id="courseFilter"
             value={selectedCourse}
             onChange={handleFilterChange}
-            className="mt-1 block  pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            className="mt-1 block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           >
             <option value="">Todos los cursos</option>
             {products.map((product) => (
-              <option key={product._id} value={product.nombre}>
+              <option key={product.id} value={product.nombre}>
                 {product.nombre}
               </option>
             ))}
@@ -157,8 +155,9 @@ const CursosPage = () => {
             ))}
           </select>
         </label>
+
         {/* Filtrar precio*/}
-        <label htmlFor="levelFilter" className="p-4 text-lg font-medium text-gray-700">
+        <label htmlFor="sortOrder" className="p-4 text-lg font-medium text-gray-700">
           Filtrar por precio:
           <select
             id="sortOrder"
@@ -212,7 +211,6 @@ const CursosPage = () => {
           </div>
         ))}
       </div>
-
     </div>
   );
 };
