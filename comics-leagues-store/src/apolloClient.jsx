@@ -1,20 +1,20 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
-//agrega 'userClient' en el gql si usaras ms-usuario como destino de la consulta
+// Cliente para ms-usuario
 const userClient = new ApolloClient({
-  uri: 'http://localhost:8080/query', 
+  uri: 'http://localhost:3002/usuario', 
   cache: new InMemoryCache(),
 });
 
-//agrega 'productClient' en el gql si usaras ms-producto como destino de la consulta
+// Cliente para ms-producto
 const productClient = new ApolloClient({
-  uri: 'http://localhost:8081/query', // Cambia según tu configuración
+  uri: 'http://localhost:3002/producto',
   cache: new InMemoryCache(),
 });
 
-//agrega 'cartClient' en el gql si usaras ms-carrito como destino de la consulta
+// Cliente para ms-carrito
 const cartClient = new ApolloClient({
-  uri: 'http://localhost:8082/query',
+  uri: 'http://localhost:3002/carrito',
   cache: new InMemoryCache(),
 });
 
