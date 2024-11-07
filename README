@@ -8,3 +8,6 @@ air
 # Levantamineto de el contenedor con la imagen de rabbitqm
 docker-compose up -d
 
+# Al ingresar al ms-pago por primera y si quieren compilar el ms
+npm instal
+npm run dev
