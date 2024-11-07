@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 import { cartClient, productClient } from '../apolloClient';
 import { Button } from "@nextui-org/react";
 
@@ -29,6 +29,16 @@ const CURSOS_POR_ID = gql`
   }
 `;
 
+const ELIMINAR_PRODUCTO = gql`
+  mutation EliminarProducto($input: EliminarProductoInput!) {
+    EliminarProducto(input: $input) {
+      id
+      idUsuario
+      idProductos
+    }
+  }
+`;
+
 export const CartModal = ({ isOpen, closeModal }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [cartData, setCartData] = useState([]);
@@ -51,7 +61,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
   const userId = ExtraerIdUsuario();
 
   // Query para obtener el carrito
-  const { data: cartDataResult, loading: loadingCart } = useQuery(OBTENER_CARRITO, {
+  const { data: cartDataResult, loading: loadingCart, refetch: refetchCart } = useQuery(OBTENER_CARRITO, {
     variables: { id: userId },
     skip: !userId,
     client: cartClient,
@@ -78,18 +88,40 @@ export const CartModal = ({ isOpen, closeModal }) => {
   });
 
   useEffect(() => {
-    // Actualiza `cartData` cuando `cartDataResult` tenga datos
-    if (cartDataResult && cartDataResult.ObtenerCarrito) {
-      setCartData(cartDataResult.ObtenerCarrito.idProductos);
-    }
-  }, [cartDataResult]);
+    const fetchCartAndProducts = async () => {
+      if (cartDataResult && cartDataResult.ObtenerCarrito) {
+        const cartProducts = cartDataResult.ObtenerCarrito.idProductos;
+        setCartData(cartProducts);
+        await refetchProductDetails({ ids: cartProducts, userId });
+      }
+    };
 
-  useEffect(() => {
-    // Refetch de los detalles de los productos solo si `cartData` cambia y no está vacío
-    if (cartData.length > 0 && userId) {
-      refetchProductDetails({ ids: cartData, userId });
+    if (cartDataResult) {
+      fetchCartAndProducts();
     }
-  }, [cartData, userId, refetchProductDetails]);
+  }, [cartDataResult, userId, refetchProductDetails]);
+
+  const [eliminarProducto] = useMutation(ELIMINAR_PRODUCTO, {
+    onCompleted: (data) => {
+      const updatedCartData = data.EliminarProducto.idProductos;
+      setCartData(updatedCartData);
+      refetchProductDetails({ ids: updatedCartData, userId }); // Refresca los detalles de los productos
+      setErrorMessage(''); // Limpia cualquier mensaje de error después de una eliminación exitosa
+    },
+    onError: (error) => {
+      setErrorMessage('Error al eliminar el producto.');
+      console.error('Detalles del error:', error);
+    },
+  });
+
+  const handleEliminarProducto = (idProducto) => {
+    eliminarProducto({
+      variables: {
+        input: { IDUsuario: userId, IDProducto: idProducto },
+      },
+      client: cartClient,
+    });
+  };
 
   useEffect(() => {
     const handleUserLoggedOut = () => {
@@ -104,7 +136,6 @@ export const CartModal = ({ isOpen, closeModal }) => {
       window.removeEventListener('userLoggedOut', handleUserLoggedOut);
     };
   }, []);
-
 
   if (!isOpen) return null;
 
@@ -131,7 +162,7 @@ export const CartModal = ({ isOpen, closeModal }) => {
                   <span className="text-lg font-semibold text-cyan-600">${product.precio}</span>
                 </div>
 
-                <Button  className="ml-4 px-2 py-1" color="danger">
+                <Button className="ml-4 px-2 py-1" color="danger" onClick={() => handleEliminarProducto(product.id)}>
                   Eliminar
                 </Button>
               </li>
