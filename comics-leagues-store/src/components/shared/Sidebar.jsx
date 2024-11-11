@@ -24,7 +24,7 @@ const Sidebar = () =>{
         {title: "Cerrar Sesión", spacing: true, icon: <ImExit />, link: "/", isExitButton: true},
     ];
 
-    const navigate = useNavigate(); // Hook de react-router-dom para redirigir
+    const navigate = useNavigate(); //hook de react-router-dom para redirigir
 
     const handleLogout = () => {
       logout(); // Cierra la sesión
